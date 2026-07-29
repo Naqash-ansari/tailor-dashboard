@@ -288,7 +288,7 @@ export function CustomersTable() {
                 <td className="px-4 py-4">
                   <div className="flex flex-wrap gap-2">
                     <Link
-                      href={`/customers/test?id=${order.id}`}
+                      href={`/customers/order?id=${order.id}`}
                       className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-50"
                     >
                       Edit
@@ -351,7 +351,7 @@ export function CustomersTable() {
             ) : null}
           </div>
           <Link
-            href={`/customers/test?customerId=${group.orders[0].id}`}
+            href={`/customers/order?customerId=${group.orders[0].id}`}
             className="w-fit rounded-md bg-[#102f2d] px-4 py-2 text-sm font-bold text-white hover:bg-[#183936]"
           >
             Add order
@@ -428,7 +428,7 @@ export function CustomersTable() {
               Dashboard
             </Link>
             <Link
-              href="/customers/test"
+              href="/customers/order"
               className="rounded-md bg-[#005f52] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#064e45]"
             >
               Add new customer

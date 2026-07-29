@@ -63,22 +63,29 @@ type FormState = {
     neckDetail: string;
     neckDesignValue: string;
     frontStrip: string;
+    frontStripValue: string;
     shoulderStrapDetail: string;
+    shoulderStrapValue: string;
     pocket: string;
     pocketFlaps: string;
     sleeveStyle: string;
     wristCuffStyle: string;
     cuffDesignValue: string;
     ghairaBottomDetail: string;
+    ghairaBottomValue: string;
     sideChaakSlit: string;
     platesDarts: string;
-    zip: string;
+    zipDetail: string;
+    zipValue: string;
     button: string;
     piping: string;
     dupattaVeil: string;
     shalwar: string;
+    shalwarValue: string;
     pantTrouser: string;
+    pantTrouserValue: string;
     anklePancha: string;
+    anklePanchaValue: string;
     designReference: string;
     totalPayment: string;
     advancePayment: string;
@@ -142,22 +149,29 @@ const initialState: FormState = {
     neckDetail: "",
     neckDesignValue: "",
     frontStrip: "",
+    frontStripValue: "",
     shoulderStrapDetail: "",
+    shoulderStrapValue: "",
     pocket: "",
     pocketFlaps: "",
     sleeveStyle: "",
     wristCuffStyle: "",
     cuffDesignValue: "",
     ghairaBottomDetail: "",
+    ghairaBottomValue: "",
     sideChaakSlit: "",
     platesDarts: "",
-    zip: "",
+    zipDetail: "",
+    zipValue: "",
     button: "",
     piping: "",
     dupattaVeil: "",
     shalwar: "",
+    shalwarValue: "",
     pantTrouser: "",
+    pantTrouserValue: "",
     anklePancha: "",
+    anklePanchaValue: "",
     designReference: "",
     totalPayment: "",
     advancePayment: "",
@@ -269,22 +283,29 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
         neckDetail: customer.collarDesign || customer.neckDesign,
         neckDesignValue: customer.neckDesignValue,
         frontStrip: customer.frontStrip,
+        frontStripValue: customer.frontStripValue,
         shoulderStrapDetail: customer.shoulderStrapDetail,
+        shoulderStrapValue: customer.shoulderStrapValue,
         pocket: "",
         pocketFlaps: customer.pocketFlaps,
         sleeveStyle: customer.sleeveStyle,
         wristCuffStyle: customer.wristCuffStyle,
         cuffDesignValue: customer.cuffDesignValue,
         ghairaBottomDetail: customer.ghairaBottomDetail,
+        ghairaBottomValue: customer.ghairaBottomValue,
         sideChaakSlit: customer.sideChaakSlit,
         platesDarts: customer.platesDarts,
-        zip: customer.zip ? "yes" : "",
+        zipDetail: customer.zipDetail || (customer.zip ? "Visible" : ""),
+        zipValue: customer.zipValue,
         button: customer.buttonDetails,
         piping: customer.piping,
         dupattaVeil: customer.dupattaVeil,
         shalwar: customer.shalwarStyle,
+        shalwarValue: customer.shalwarStyleValue,
         pantTrouser: customer.pantTrouserStyle,
+        pantTrouserValue: customer.pantTrouserStyleValue,
         anklePancha: customer.anklePancha,
+        anklePanchaValue: customer.anklePanchaValue,
         designReference: customer.suitDesign || customer.fabricType,
         totalPayment: customer.stitchingPrice,
         advancePayment: customer.advancePayment || "0",
@@ -449,6 +470,46 @@ const cuffDesignOptions: ImageChoiceOption[] = [
     { value: "Straight", image: "/cuf/straight-cuff.png" }
 ];
 
+const frontStripOptions: ImageChoiceOption[] = [
+    { value: "Pointed", image: "/strip/pointed-plain.svg" },
+    { value: "Straight", image: "/strip/straight-plain.svg" },
+    { value: "Pointed with Notch", image: "/strip/pointed-notch.svg" },
+    { value: "Straight with Notch", image: "/strip/straight-notch.svg" }
+];
+
+const shoulderStrapOptions: ImageChoiceOption[] = [
+    { value: "Pointed", image: "/strap/pointed-strap.svg" },
+    { value: "Straight", image: "/strap/straight-strap.svg" }
+];
+
+const ghairaBottomOptions: ImageChoiceOption[] = [
+    { value: "Pleated - Curved", image: "/ghaira/pleated-curved.svg" },
+    { value: "Pleated - Straight", image: "/ghaira/pleated-straight.svg" },
+    { value: "Flared Panel", image: "/ghaira/flared-panel.svg" }
+];
+
+const zipOptions: ImageChoiceOption[] = [
+    { value: "Visible", image: "/zip/visible-zip.svg" },
+    { value: "Invisible", image: "/zip/invisible-zip.svg" }
+];
+
+const shalwarStyleOptions: ImageChoiceOption[] = [
+    { value: "Regular Cut", image: "/shalwar/regular-cut.svg" },
+    { value: "Narrow Cut", image: "/shalwar/narrow-cut.svg" },
+    { value: "Pleated Cut", image: "/shalwar/pleated-cut.svg" }
+];
+
+const pantTrouserOptions: ImageChoiceOption[] = [
+    { value: "Tapered Cut", image: "/pant/tapered-cut.png" },
+    { value: "Straight Cut", image: "/pant/straight.png" }
+];
+
+const anklePanchaOptions: ImageChoiceOption[] = [
+    { value: "Plain Hem", image: "/ankle/plain-hem.svg" },
+    { value: "Gathered Pancha", image: "/ankle/gathered-pancha.svg" },
+    { value: "Cuffed Band", image: "/ankle/cuffed-band.svg" }
+];
+
 function ImageChoiceField({
     label,
     value,
@@ -495,11 +556,10 @@ function ImageChoiceField({
                         {options.map((option) => (
                             <label
                                 key={option.value}
-                                className={`flex cursor-pointer flex-col items-center gap-2 rounded-md border p-2 text-center transition ${
-                                    value === option.value
+                                className={`flex cursor-pointer flex-col items-center gap-2 rounded-md border p-2 text-center transition ${value === option.value
                                         ? "border-[#0d6b5f] bg-[#0d6b5f]/5"
                                         : "border-[#e1d6c4] hover:bg-[#fbfaf7]"
-                                }`}
+                                    }`}
                             >
                                 <input
                                     type="radio"
@@ -514,6 +574,7 @@ function ImageChoiceField({
                                     alt={`${option.value} ${label}`}
                                     width={140}
                                     height={70}
+                                    unoptimized
                                     className="h-14 w-full object-contain"
                                 />
                                 <span className="text-xs font-semibold text-slate-700">{option.value}</span>
@@ -539,7 +600,7 @@ function ImageChoiceField({
     );
 }
 
-export function CustomerTestForm() {
+export function CustomerOrderForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const editId = searchParams.get("id") ?? undefined;
@@ -616,8 +677,8 @@ export function CustomerTestForm() {
     const pageTitle = isEditing
         ? "Edit order measurements"
         : sourceCustomerId
-        ? "Add new order for customer"
-        : "Customer measurement entry";
+            ? "Add new order for customer"
+            : "Customer measurement entry";
 
     const handleChange = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -627,8 +688,8 @@ export function CustomerTestForm() {
             name === "totalPayment" || name === "advancePayment" || name === "remainingPayment"
                 ? sanitizeDecimalInput(value)
                 : name === "number"
-                ? sanitizePhoneDigits(value)
-                : value;
+                    ? sanitizePhoneDigits(value)
+                    : value;
 
         if (name === "number") {
             setPhoneError("");
@@ -710,26 +771,34 @@ export function CustomerTestForm() {
         leftCalf: form.leftCalf,
         ankleBottom: form.ankleBottom,
         elastic: ["yes", "true", "1"].includes((form.elastic || "").toLowerCase()),
-        zip: ["yes", "true", "1"].includes((form.zip || "").toLowerCase()),
+        zip: Boolean(form.zipDetail),
+        zipDetail: form.zipDetail,
+        zipValue: form.zipValue,
         fittingStyle: form.fittingStyle,
         seamStyle: form.seamStyle,
         neckDesign: form.neckDetail,
         neckDesignValue: form.neckDesignValue,
         frontStrip: form.frontStrip,
+        frontStripValue: form.frontStripValue,
         shoulderStrapDetail: form.shoulderStrapDetail,
+        shoulderStrapValue: form.shoulderStrapValue,
         pocketFlaps: form.pocketFlaps,
         sleeveStyle: form.sleeveStyle,
         wristCuffStyle: form.wristCuffStyle,
         cuffDesignValue: form.cuffDesignValue,
         ghairaBottomDetail: form.ghairaBottomDetail,
+        ghairaBottomValue: form.ghairaBottomValue,
         sideChaakSlit: form.sideChaakSlit,
         platesDarts: form.platesDarts,
         buttonDetails: form.button,
         piping: form.piping,
         dupattaVeil: form.dupattaVeil,
         shalwarStyle: form.shalwar,
+        shalwarStyleValue: form.shalwarValue,
         pantTrouserStyle: form.pantTrouser,
+        pantTrouserStyleValue: form.pantTrouserValue,
         anklePancha: form.anklePancha,
+        anklePanchaValue: form.anklePanchaValue,
         fabricType: form.designReference,
         suitDesign: form.designReference,
         stitchingPrice: form.totalPayment,
@@ -901,8 +970,29 @@ export function CustomerTestForm() {
                             </p>
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                            <Field label="Fitting Style" name="fittingStyle" value={form.fittingStyle} onChange={handleChange} />
-                            <Field label="Seam Style" name="seamStyle" value={form.seamStyle} onChange={handleChange} />
+                            <SelectField
+                                label="Fitting Style"
+                                name="fittingStyle"
+                                value={form.fittingStyle}
+                                onChange={handleChange}
+                                options={[
+                                    { value: "", label: "Select fitting style" },
+                                    { value: "Slim", label: "Slim" },
+                                    { value: "Medium", label: "Medium" },
+                                    { value: "Loose", label: "Loose" }
+                                ]}
+                            />
+                            <SelectField
+                                label="Seam Style"
+                                name="seamStyle"
+                                value={form.seamStyle}
+                                onChange={handleChange}
+                                options={[
+                                    { value: "", label: "Select seam style" },
+                                    { value: "Single Stitch", label: "Single Stitch" },
+                                    { value: "Double Stitch", label: "Double Stitch" }
+                                ]}
+                            />
                             <ImageChoiceField
                                 label="Neck"
                                 value={form.neckDetail}
@@ -915,8 +1005,30 @@ export function CustomerTestForm() {
                                         setForm((current) => ({ ...current, neckDesignValue: value }))
                                 }}
                             />
-                            <Field label="Front Strip" name="frontStrip" value={form.frontStrip} onChange={handleChange} />
-                            <Field label="Shoulder Strap" name="shoulderStrapDetail" value={form.shoulderStrapDetail} onChange={handleChange} />
+                            <ImageChoiceField
+                                label="Front Strip"
+                                value={form.frontStrip}
+                                onChange={(value) => setForm((current) => ({ ...current, frontStrip: value }))}
+                                options={frontStripOptions}
+                                extraField={{
+                                    label: "Front Strip Value",
+                                    value: form.frontStripValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, frontStripValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Shoulder Strap"
+                                value={form.shoulderStrapDetail}
+                                onChange={(value) => setForm((current) => ({ ...current, shoulderStrapDetail: value }))}
+                                options={shoulderStrapOptions}
+                                extraField={{
+                                    label: "Shoulder Strap Value",
+                                    value: form.shoulderStrapValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, shoulderStrapValue: value }))
+                                }}
+                            />
                             <Field label="Pocket" name="pocket" value={form.pocket} onChange={handleChange} />
                             <Field label="Pocket Flaps" name="pocketFlaps" value={form.pocketFlaps} onChange={handleChange} />
                             <Field label="Sleeve" name="sleeveStyle" value={form.sleeveStyle} onChange={handleChange} />
@@ -932,16 +1044,71 @@ export function CustomerTestForm() {
                                         setForm((current) => ({ ...current, cuffDesignValue: value }))
                                 }}
                             />
-                            <Field label="Ghaira / Bottom" name="ghairaBottomDetail" value={form.ghairaBottomDetail} onChange={handleChange} />
+                            <ImageChoiceField
+                                label="Ghaira / Bottom"
+                                value={form.ghairaBottomDetail}
+                                onChange={(value) => setForm((current) => ({ ...current, ghairaBottomDetail: value }))}
+                                options={ghairaBottomOptions}
+                                extraField={{
+                                    label: "Ghaira / Bottom Value",
+                                    value: form.ghairaBottomValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, ghairaBottomValue: value }))
+                                }}
+                            />
                             <Field label="Side Chaak / Slit" name="sideChaakSlit" value={form.sideChaakSlit} onChange={handleChange} />
                             <Field label="Plates / Darts" name="platesDarts" value={form.platesDarts} onChange={handleChange} />
-                            <Field label="Zip" name="zip" value={form.zip} onChange={handleChange} />
+                            <ImageChoiceField
+                                label="Zip"
+                                value={form.zipDetail}
+                                onChange={(value) => setForm((current) => ({ ...current, zipDetail: value }))}
+                                options={zipOptions}
+                                extraField={{
+                                    label: "Zip Value",
+                                    value: form.zipValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, zipValue: value }))
+                                }}
+                            />
                             <Field label="Button" name="button" value={form.button} onChange={handleChange} />
                             <Field label="Pipping" name="piping" value={form.piping} onChange={handleChange} />
                             <Field label="Dupatta / Veil" name="dupattaVeil" value={form.dupattaVeil} onChange={handleChange} />
-                            <Field label="Shalwar" name="shalwar" value={form.shalwar} onChange={handleChange} />
-                            <Field label="Pant / Trouser" name="pantTrouser" value={form.pantTrouser} onChange={handleChange} />
-                            <Field label="Ankle / Pancha" name="anklePancha" value={form.anklePancha} onChange={handleChange} />
+                            <ImageChoiceField
+                                label="Shalwar"
+                                value={form.shalwar}
+                                onChange={(value) => setForm((current) => ({ ...current, shalwar: value }))}
+                                options={shalwarStyleOptions}
+                                extraField={{
+                                    label: "Shalwar Value",
+                                    value: form.shalwarValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, shalwarValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Pant / Trouser"
+                                value={form.pantTrouser}
+                                onChange={(value) => setForm((current) => ({ ...current, pantTrouser: value }))}
+                                options={pantTrouserOptions}
+                                extraField={{
+                                    label: "Pant / Trouser Value",
+                                    value: form.pantTrouserValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, pantTrouserValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Ankle / Pancha"
+                                value={form.anklePancha}
+                                onChange={(value) => setForm((current) => ({ ...current, anklePancha: value }))}
+                                options={anklePanchaOptions}
+                                extraField={{
+                                    label: "Ankle / Pancha Value",
+                                    value: form.anklePanchaValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, anklePanchaValue: value }))
+                                }}
+                            />
                             <TextAreaField label="Design Reference / Special Instructions" name="designReference" value={form.designReference} onChange={handleChange} />
                         </div>
                     </section>

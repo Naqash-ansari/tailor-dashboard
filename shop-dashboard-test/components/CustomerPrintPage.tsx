@@ -112,6 +112,46 @@ const cuffDesignImages: Record<string, string> = {
   Straight: "/cuf/straight-cuff.png"
 };
 
+const frontStripDesignImages: Record<string, string> = {
+  Pointed: "/strip/pointed-plain.svg",
+  Straight: "/strip/straight-plain.svg",
+  "Pointed with Notch": "/strip/pointed-notch.svg",
+  "Straight with Notch": "/strip/straight-notch.svg"
+};
+
+const shoulderStrapDesignImages: Record<string, string> = {
+  Pointed: "/strap/pointed-strap.svg",
+  Straight: "/strap/straight-strap.svg"
+};
+
+const ghairaBottomDesignImages: Record<string, string> = {
+  "Pleated - Curved": "/ghaira/pleated-curved.svg",
+  "Pleated - Straight": "/ghaira/pleated-straight.svg",
+  "Flared Panel": "/ghaira/flared-panel.svg"
+};
+
+const zipDesignImages: Record<string, string> = {
+  Visible: "/zip/visible-zip.svg",
+  Invisible: "/zip/invisible-zip.svg"
+};
+
+const shalwarStyleDesignImages: Record<string, string> = {
+  "Regular Cut": "/shalwar/regular-cut.svg",
+  "Narrow Cut": "/shalwar/narrow-cut.svg",
+  "Pleated Cut": "/shalwar/pleated-cut.svg"
+};
+
+const pantTrouserDesignImages: Record<string, string> = {
+  "Tapered Cut": "/pant/tapered-cut.png",
+  "Straight Cut": "/pant/straight.png"
+};
+
+const anklePanchaDesignImages: Record<string, string> = {
+  "Plain Hem": "/ankle/plain-hem.svg",
+  "Gathered Pancha": "/ankle/gathered-pancha.svg",
+  "Cuffed Band": "/ankle/cuffed-band.svg"
+};
+
 function DesignImageSection({
   title,
   design,
@@ -152,6 +192,7 @@ function DesignImageSection({
             alt={`${design} ${title}`}
             width={160}
             height={80}
+            unoptimized
             className="h-16 w-auto object-contain"
           />
         </div>
@@ -282,6 +323,55 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 design={customer.wristCuffStyle}
                 images={cuffDesignImages}
                 measurementValue={(customer.cuffDesignValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Front Strip Design"
+                design={customer.frontStrip}
+                images={frontStripDesignImages}
+                measurementValue={(customer.frontStripValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Shoulder Strap Design"
+                design={customer.shoulderStrapDetail}
+                images={shoulderStrapDesignImages}
+                measurementValue={(customer.shoulderStrapValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Ghaira / Bottom Design"
+                design={customer.ghairaBottomDetail}
+                images={ghairaBottomDesignImages}
+                measurementValue={(customer.ghairaBottomValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Zip"
+                design={customer.zipDetail}
+                images={zipDesignImages}
+                measurementValue={(customer.zipValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Shalwar Design"
+                design={customer.shalwarStyle}
+                images={shalwarStyleDesignImages}
+                measurementValue={(customer.shalwarStyleValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Pant / Trouser Design"
+                design={customer.pantTrouserStyle}
+                images={pantTrouserDesignImages}
+                measurementValue={(customer.pantTrouserStyleValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Ankle / Pancha Design"
+                design={customer.anklePancha}
+                images={anklePanchaDesignImages}
+                measurementValue={(customer.anklePanchaValue || "").trim()}
                 unit={customer.measurementUnit || "inch"}
               />
             </div>

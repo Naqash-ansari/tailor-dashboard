@@ -199,7 +199,7 @@ export function DashboardHome() {
 
               <nav className="flex flex-wrap gap-3">
                 <Link
-                  href="/customers/test"
+                  href="/customers/order"
                   className="rounded-md bg-[#d8b05b] px-5 py-2.5 text-sm font-bold text-[#122b2a] shadow-sm transition hover:bg-[#e4c171]"
                 >
                   Add customer
@@ -353,7 +353,7 @@ export function DashboardHome() {
               </h2>
             </div>
             <Link
-              href="/customers/test"
+              href="/customers/order"
               className="w-fit rounded-md bg-[#122b2a] px-4 py-2 text-sm font-bold text-white hover:bg-[#183936]"
             >
               New measurement

@@ -63,6 +63,8 @@ export type TailorCustomer = {
   bottomPoncha: string;
   elastic: boolean;
   zip: boolean;
+  zipDetail: string;
+  zipValue: string;
   sidePocket: boolean;
   frontPocket: boolean;
   fittingStyle: string;
@@ -70,20 +72,26 @@ export type TailorCustomer = {
   neckDesign: string;
   neckDesignValue: string;
   frontStrip: string;
+  frontStripValue: string;
   shoulderStrapDetail: string;
+  shoulderStrapValue: string;
   pocketFlaps: string;
   sleeveStyle: string;
   wristCuffStyle: string;
   cuffDesignValue: string;
   ghairaBottomDetail: string;
+  ghairaBottomValue: string;
   sideChaakSlit: string;
   platesDarts: string;
   buttonDetails: string;
   piping: string;
   dupattaVeil: string;
   shalwarStyle: string;
+  shalwarStyleValue: string;
   pantTrouserStyle: string;
+  pantTrouserStyleValue: string;
   anklePancha: string;
+  anklePanchaValue: string;
   fabricType: string;
   suitDesign: string;
   stitchingPrice: string;
@@ -153,6 +161,8 @@ export const emptyCustomerForm: CustomerFormValues = {
   bottomPoncha: "",
   elastic: false,
   zip: false,
+  zipDetail: "",
+  zipValue: "",
   sidePocket: false,
   frontPocket: false,
   fittingStyle: "",
@@ -160,20 +170,26 @@ export const emptyCustomerForm: CustomerFormValues = {
   neckDesign: "",
   neckDesignValue: "",
   frontStrip: "",
+  frontStripValue: "",
   shoulderStrapDetail: "",
+  shoulderStrapValue: "",
   pocketFlaps: "",
   sleeveStyle: "",
   wristCuffStyle: "",
   cuffDesignValue: "",
   ghairaBottomDetail: "",
+  ghairaBottomValue: "",
   sideChaakSlit: "",
   platesDarts: "",
   buttonDetails: "",
   piping: "",
   dupattaVeil: "",
   shalwarStyle: "",
+  shalwarStyleValue: "",
   pantTrouserStyle: "",
+  pantTrouserStyleValue: "",
   anklePancha: "",
+  anklePanchaValue: "",
   fabricType: "",
   suitDesign: "",
   stitchingPrice: "",
