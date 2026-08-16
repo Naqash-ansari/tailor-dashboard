@@ -102,26 +102,43 @@ function MeasurementSection({
 }
 
 const neckDesignImages: Record<string, string> = {
-  Straight: "/nick/straight-ban.png",
-  Curved: "/nick/curved-ban.png"
+  Curved: "/neck/curved-ban.png",
+  Straight: "/neck/straight-ban.png",
+  Double: "/neck/double-ban.png",
+  Stepped: "/neck/stepped-ban.png"
 };
 
 const cuffDesignImages: Record<string, string> = {
   Round: "/cuf/round-cuff.png",
   Angled: "/cuf/angled-cuff.png",
-  Straight: "/cuf/straight-cuff.png"
+  Straight: "/cuf/straight-cuff.png",
+  Pointed: "/cuf/pointed-cuff.png"
 };
 
 const frontStripDesignImages: Record<string, string> = {
-  Pointed: "/strip/pointed-plain.svg",
-  Straight: "/strip/straight-plain.svg",
-  "Pointed with Notch": "/strip/pointed-notch.svg",
-  "Straight with Notch": "/strip/straight-notch.svg"
+  Pointed: "/strip/pointed-plain.png",
+  Straight: "/strip/straight-plain.png",
+  "Pointed with Notch": "/strip/pointed-notch.png",
+  "Straight with Notch": "/strip/straight-notch.png"
 };
 
 const shoulderStrapDesignImages: Record<string, string> = {
   Pointed: "/strap/pointed-strap.svg",
   Straight: "/strap/straight-strap.svg"
+};
+
+const pocketDesignImages: Record<string, string> = {
+  "Pointed Flap": "/pocket/pointed-flap.png",
+  "Arched Flap": "/pocket/arched-flap.png",
+  "Rounded Bottom": "/pocket/rounded-bottom.png",
+  "Pointed Bottom": "/pocket/pointed-bottom.png",
+  "Angled Bottom": "/pocket/angled-bottom.png"
+};
+
+const pocketFlapsDesignImages: Record<string, string> = {
+  "Pointed Flap": "/pocket-flaps/pointed-flap.png",
+  "Curved Flap": "/pocket-flaps/curved-flap.png",
+  "Straight Flap": "/pocket-flaps/straight-flap.png"
 };
 
 const ghairaBottomDesignImages: Record<string, string> = {
@@ -172,33 +189,28 @@ function DesignImageSection({
   }
 
   return (
-    <div className="rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-4">
-      <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">{title}</h3>
-      <div className="mt-3 flex flex-col items-center gap-2 rounded-md bg-white p-4">
-        <div className="flex w-full items-center justify-center gap-3">
-          {measurementValue ? (
-            <div className="flex items-center gap-2">
-              <div className="text-right leading-none">
-                <p className="text-xl font-black text-[#0d6b5f]">{measurementValue}</p>
-                <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-[#0d6b5f]/70">
-                  {unit}
-                </p>
-              </div>
-              <span className="h-px w-6 bg-[#0d6b5f]" />
-            </div>
-          ) : null}
-          <Image
-            src={image}
-            alt={`${design} ${title}`}
-            width={160}
-            height={80}
-            unoptimized
-            className="h-16 w-auto object-contain"
-          />
-        </div>
-        <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
+    <div className="rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-3">
+      {/* <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">{title}</h3> */}
+      <div className="mt-2 flex flex-col items-center gap-1.5 rounded-md bg-white p-3">
+        <Image
+          src={image}
+          alt={`${design} ${title}`}
+          width={100}
+          height={50}
+          unoptimized
+          className="h-10 w-auto object-contain"
+        />
+        {measurementValue ? (
+          <div className="text-center leading-none">
+            <p className="text-sm font-black text-[#0d6b5f]">{measurementValue}</p>
+            <p className="mt-0.5 text-[9px] font-bold uppercase tracking-wide text-[#0d6b5f]/70">
+              {unit}
+            </p>
+          </div>
+        ) : null}
+        {/* <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
           {design}
-        </span>
+        </span> */}
       </div>
     </div>
   );
@@ -310,7 +322,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 customer={customer}
               />
             </div>
-            <div className="grid gap-4 px-6 pb-6 sm:grid-cols-2">
+            <div className="grid gap-4 px-6 pb-6 sm:grid-cols-6">
               <DesignImageSection
                 title="Neck Design"
                 design={customer.collarDesign || customer.neckDesign}
@@ -323,6 +335,20 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 design={customer.wristCuffStyle}
                 images={cuffDesignImages}
                 measurementValue={(customer.cuffDesignValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Pocket Design"
+                design={customer.pocketStyle}
+                images={pocketDesignImages}
+                measurementValue={(customer.pocketStyleValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Pocket Flaps Design"
+                design={customer.pocketFlaps}
+                images={pocketFlapsDesignImages}
+                measurementValue={(customer.pocketFlapsValue || "").trim()}
                 unit={customer.measurementUnit || "inch"}
               />
               <DesignImageSection

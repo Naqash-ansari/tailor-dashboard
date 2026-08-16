@@ -75,7 +75,10 @@ export type TailorCustomer = {
   frontStripValue: string;
   shoulderStrapDetail: string;
   shoulderStrapValue: string;
+  pocketStyle: string;
+  pocketStyleValue: string;
   pocketFlaps: string;
+  pocketFlapsValue: string;
   sleeveStyle: string;
   wristCuffStyle: string;
   cuffDesignValue: string;
@@ -173,7 +176,10 @@ export const emptyCustomerForm: CustomerFormValues = {
   frontStripValue: "",
   shoulderStrapDetail: "",
   shoulderStrapValue: "",
+  pocketStyle: "",
+  pocketStyleValue: "",
   pocketFlaps: "",
+  pocketFlapsValue: "",
   sleeveStyle: "",
   wristCuffStyle: "",
   cuffDesignValue: "",

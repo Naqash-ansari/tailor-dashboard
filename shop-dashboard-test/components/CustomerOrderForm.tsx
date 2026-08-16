@@ -67,7 +67,9 @@ type FormState = {
     shoulderStrapDetail: string;
     shoulderStrapValue: string;
     pocket: string;
+    pocketValue: string;
     pocketFlaps: string;
+    pocketFlapsValue: string;
     sleeveStyle: string;
     wristCuffStyle: string;
     cuffDesignValue: string;
@@ -153,7 +155,9 @@ const initialState: FormState = {
     shoulderStrapDetail: "",
     shoulderStrapValue: "",
     pocket: "",
+    pocketValue: "",
     pocketFlaps: "",
+    pocketFlapsValue: "",
     sleeveStyle: "",
     wristCuffStyle: "",
     cuffDesignValue: "",
@@ -286,8 +290,10 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
         frontStripValue: customer.frontStripValue,
         shoulderStrapDetail: customer.shoulderStrapDetail,
         shoulderStrapValue: customer.shoulderStrapValue,
-        pocket: "",
+        pocket: customer.pocketStyle,
+        pocketValue: customer.pocketStyleValue,
         pocketFlaps: customer.pocketFlaps,
+        pocketFlapsValue: customer.pocketFlapsValue,
         sleeveStyle: customer.sleeveStyle,
         wristCuffStyle: customer.wristCuffStyle,
         cuffDesignValue: customer.cuffDesignValue,
@@ -460,21 +466,24 @@ function SelectField({
 type ImageChoiceOption = { value: string; image: string };
 
 const neckDesignOptions: ImageChoiceOption[] = [
-    { value: "Straight", image: "/nick/straight-ban.png" },
-    { value: "Curved", image: "/nick/curved-ban.png" }
+    { value: "Curved", image: "/neck/curved-ban.png" },
+    { value: "Straight", image: "/neck/straight-ban.png" },
+    { value: "Double", image: "/neck/double-ban.png" },
+    { value: "Stepped", image: "/neck/stepped-ban.png" }
 ];
 
 const cuffDesignOptions: ImageChoiceOption[] = [
     { value: "Round", image: "/cuf/round-cuff.png" },
     { value: "Angled", image: "/cuf/angled-cuff.png" },
-    { value: "Straight", image: "/cuf/straight-cuff.png" }
+    { value: "Straight", image: "/cuf/straight-cuff.png" },
+    { value: "Pointed", image: "/cuf/pointed-cuff.png" }
 ];
 
 const frontStripOptions: ImageChoiceOption[] = [
-    { value: "Pointed", image: "/strip/pointed-plain.svg" },
-    { value: "Straight", image: "/strip/straight-plain.svg" },
-    { value: "Pointed with Notch", image: "/strip/pointed-notch.svg" },
-    { value: "Straight with Notch", image: "/strip/straight-notch.svg" }
+    { value: "Pointed", image: "/strip/pointed-plain.png" },
+    { value: "Straight", image: "/strip/straight-plain.png" },
+    { value: "Pointed with Notch", image: "/strip/pointed-notch.png" },
+    { value: "Straight with Notch", image: "/strip/straight-notch.png" }
 ];
 
 const shoulderStrapOptions: ImageChoiceOption[] = [
@@ -502,6 +511,20 @@ const shalwarStyleOptions: ImageChoiceOption[] = [
 const pantTrouserOptions: ImageChoiceOption[] = [
     { value: "Tapered Cut", image: "/pant/tapered-cut.png" },
     { value: "Straight Cut", image: "/pant/straight.png" }
+];
+
+const pocketOptions: ImageChoiceOption[] = [
+    { value: "Pointed Flap", image: "/pocket/pointed-flap.png" },
+    { value: "Arched Flap", image: "/pocket/arched-flap.png" },
+    { value: "Rounded Bottom", image: "/pocket/rounded-bottom.png" },
+    { value: "Pointed Bottom", image: "/pocket/pointed-bottom.png" },
+    { value: "Angled Bottom", image: "/pocket/angled-bottom.png" }
+];
+
+const pocketFlapsOptions: ImageChoiceOption[] = [
+    { value: "Pointed Flap", image: "/pocket-flaps/pointed-flap.png" },
+    { value: "Curved Flap", image: "/pocket-flaps/curved-flap.png" },
+    { value: "Straight Flap", image: "/pocket-flaps/straight-flap.png" }
 ];
 
 const anklePanchaOptions: ImageChoiceOption[] = [
@@ -782,7 +805,10 @@ export function CustomerOrderForm() {
         frontStripValue: form.frontStripValue,
         shoulderStrapDetail: form.shoulderStrapDetail,
         shoulderStrapValue: form.shoulderStrapValue,
+        pocketStyle: form.pocket,
+        pocketStyleValue: form.pocketValue,
         pocketFlaps: form.pocketFlaps,
+        pocketFlapsValue: form.pocketFlapsValue,
         sleeveStyle: form.sleeveStyle,
         wristCuffStyle: form.wristCuffStyle,
         cuffDesignValue: form.cuffDesignValue,
@@ -832,7 +858,7 @@ export function CustomerOrderForm() {
     return (
         <main className="min-h-screen bg-[#f7f4ee] px-4 py-6 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-6xl rounded-2xl border border-[#e1d6c4] bg-[#fcfbf8] p-4 shadow-sm sm:p-6">
-                <header className="mb-6 rounded-xl bg-[#122b2a] p-6 text-white">
+                {/* <header className="mb-6 rounded-xl bg-[#122b2a] p-6 text-white">
                     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f3d68c]">
                         Tailor measurement form
                     </p>
@@ -843,12 +869,12 @@ export function CustomerOrderForm() {
                         This page now includes the general information, measurement details, and
                         designing & stitching detail sections from your form.
                     </p>
-                </header>
+                </header> */}
 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     <section className={sectionClass}>
-                        <div className="mb-4 border-b border-[#eee4d6] pb-3">
-                            <h2 className="text-lg font-bold text-slate-950">General Information</h2>
+                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                            <h2 className="text-lg font-bold text-white">General Information</h2>
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                             <Field label="Name" name="name" value={form.name} onChange={handleChange} />
@@ -879,11 +905,11 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="mb-4 border-b border-[#eee4d6] pb-3">
-                            <h2 className="text-lg font-bold text-slate-950">Upper Body Measurements</h2>
-                            <p className="mt-1 text-sm text-slate-500">
+                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                            <h2 className="text-lg font-bold text-white">Upper Body Measurements</h2>
+                            {/* <p className="mt-1 text-sm text-[#e8dfd2]">
                                 Select one unit below. It will apply to all upper and lower body measurements.
-                            </p>
+                            </p> */}
                         </div>
                         <div className="mb-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             <SelectField
@@ -934,11 +960,11 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="mb-4 border-b border-[#eee4d6] pb-3">
-                            <h2 className="text-lg font-bold text-slate-950">Lower Body Measurements</h2>
-                            <p className="mt-1 text-sm text-slate-500">
+                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                            <h2 className="text-lg font-bold text-white">Lower Body Measurements</h2>
+                            {/* <p className="mt-1 text-sm text-[#e8dfd2]">
                                 Trouser, shalwar, skirt, and lower-garment measurements.
-                            </p>
+                            </p> */}
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                             <Field label="Length" name="shalwarLength" value={form.shalwarLength} onChange={handleChange} />
@@ -963,11 +989,11 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="mb-4 border-b border-[#eee4d6] pb-3">
-                            <h2 className="text-lg font-bold text-slate-950">Designing &amp; Stitching Details</h2>
-                            <p className="mt-1 text-sm text-slate-500">
+                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                            <h2 className="text-lg font-bold text-white">Designing &amp; Stitching Details</h2>
+                            {/* <p className="mt-1 text-sm text-[#e8dfd2]">
                                 Describe garment construction and finishing preferences.
-                            </p>
+                            </p> */}
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                             <SelectField
@@ -1029,8 +1055,30 @@ export function CustomerOrderForm() {
                                         setForm((current) => ({ ...current, shoulderStrapValue: value }))
                                 }}
                             />
-                            <Field label="Pocket" name="pocket" value={form.pocket} onChange={handleChange} />
-                            <Field label="Pocket Flaps" name="pocketFlaps" value={form.pocketFlaps} onChange={handleChange} />
+                            <ImageChoiceField
+                                label="Pocket"
+                                value={form.pocket}
+                                onChange={(value) => setForm((current) => ({ ...current, pocket: value }))}
+                                options={pocketOptions}
+                                extraField={{
+                                    label: "Pocket Value",
+                                    value: form.pocketValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, pocketValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Pocket Flaps"
+                                value={form.pocketFlaps}
+                                onChange={(value) => setForm((current) => ({ ...current, pocketFlaps: value }))}
+                                options={pocketFlapsOptions}
+                                extraField={{
+                                    label: "Pocket Flaps Value",
+                                    value: form.pocketFlapsValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, pocketFlapsValue: value }))
+                                }}
+                            />
                             <Field label="Sleeve" name="sleeveStyle" value={form.sleeveStyle} onChange={handleChange} />
                             <ImageChoiceField
                                 label="Wrist / Cuff"
@@ -1114,11 +1162,11 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="mb-4 border-b border-[#eee4d6] pb-3">
-                            <h2 className="text-lg font-bold text-slate-950">Payment Details</h2>
-                            <p className="mt-1 text-sm text-slate-500">
+                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                            <h2 className="text-lg font-bold text-white">Payment Details</h2>
+                            {/* <p className="mt-1 text-sm text-[#e8dfd2]">
                                 Professional billing summary for each order.
-                            </p>
+                            </p> */}
                         </div>
                         <div className="grid gap-4 md:grid-cols-3">
                             <Field
