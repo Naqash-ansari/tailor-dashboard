@@ -101,11 +101,53 @@ function MeasurementSection({
   );
 }
 
+const frontBackMensDesignImages: Record<string, string> = {
+  "Curved Hem": "/front-back-mens/curved-hem.png",
+  "Rounded Hem": "/front-back-mens/rounded-hem.png",
+  "Straight Hem": "/front-back-mens/straight-hem.png",
+  "Angled Collar": "/front-back-mens/angled-collar.png",
+  "Placket Front": "/front-back-mens/placket-front.png",
+  "Curved Placket": "/front-back-mens/curved-placket.png",
+  "Dart Panel": "/front-back-mens/dart-panel.png"
+};
+
+const frontBackLadiesDesignImages: Record<string, string> = {
+  "Straight Bodice": "/front-back-ladies/straight-bodice.png",
+  "Curved Bodice": "/front-back-ladies/curved-bodice.png",
+  "Dart Bodice": "/front-back-ladies/dart-bodice.png",
+  "Flared Bodice": "/front-back-ladies/flared-bodice.png",
+  "Draped Bodice": "/front-back-ladies/draped-bodice.png",
+  "Double Dart Bodice": "/front-back-ladies/double-dart-bodice.png"
+};
+
+const waistcoatDesignImages: Record<string, string> = {
+  "Straight Hem": "/waistcoat/straight-hem.png",
+  "Notched Front": "/waistcoat/notched-front.png",
+  "Stepped Hem": "/waistcoat/stepped-hem.png",
+  "Angled Hem Right": "/waistcoat/angled-hem-right.png",
+  "Angled Hem Left": "/waistcoat/angled-hem-left.png"
+};
+
+const ladiesFlairDesignImages: Record<string, string> = {
+  "Curved Flair": "/ladies-flair/curved-flair.png",
+  "A-Line Flair": "/ladies-flair/a-line-flair.png",
+  "Straight Panel": "/ladies-flair/straight-panel.png",
+  "Box Pleat Flair": "/ladies-flair/box-pleat-flair.png",
+  "Gathered Panel": "/ladies-flair/gathered-panel.png"
+};
+
 const neckDesignImages: Record<string, string> = {
   Curved: "/neck/curved-ban.png",
   Straight: "/neck/straight-ban.png",
   Double: "/neck/double-ban.png",
   Stepped: "/neck/stepped-ban.png"
+};
+
+const sleeveStyleDesignImages: Record<string, string> = {
+  "Long Tapered": "/sleeve/long-tapered.png",
+  "Wide Tapered": "/sleeve/wide-tapered.png",
+  "Narrow Tapered": "/sleeve/narrow-tapered.png",
+  "Sleeve Cap": "/sleeve/sleeve-cap.png"
 };
 
 const cuffDesignImages: Record<string, string> = {
@@ -120,6 +162,11 @@ const frontStripDesignImages: Record<string, string> = {
   Straight: "/strip/straight-plain.png",
   "Pointed with Notch": "/strip/pointed-notch.png",
   "Straight with Notch": "/strip/straight-notch.png"
+};
+
+const shoulderTeraDesignImages: Record<string, string> = {
+  "Curved Notch": "/shoulder-tera/curved-notch.png",
+  "Angled Notch": "/shoulder-tera/angled-notch.png"
 };
 
 const shoulderStrapDesignImages: Record<string, string> = {
@@ -153,14 +200,19 @@ const zipDesignImages: Record<string, string> = {
 };
 
 const shalwarStyleDesignImages: Record<string, string> = {
-  "Regular Cut": "/shalwar/regular-cut.svg",
-  "Narrow Cut": "/shalwar/narrow-cut.svg",
-  "Pleated Cut": "/shalwar/pleated-cut.svg"
+  "Pleated Top": "/shalwar/pleated-top.png",
+  "Seamed Cut": "/shalwar/seamed-cut.png",
+  "Plain Cut": "/shalwar/plain-cut.png",
+  "Pleated Bottom": "/shalwar/pleated-bottom.png"
 };
 
 const pantTrouserDesignImages: Record<string, string> = {
-  "Tapered Cut": "/pant/tapered-cut.png",
-  "Straight Cut": "/pant/straight.png"
+  "Tapered Leg": "/pant-trouser/tapered-leg.png",
+  "Straight Leg": "/pant-trouser/straight-leg.png",
+  "Fitted Leg": "/pant-trouser/fitted-leg.png",
+  "Cutting Guide": "/pant-trouser/cutting-guide.png",
+  "Waistband Panel": "/pant-trouser/waistband-panel.png",
+  "Full Leg Pattern": "/pant-trouser/full-leg-pattern.png"
 };
 
 const anklePanchaDesignImages: Record<string, string> = {
@@ -324,10 +376,45 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
             </div>
             <div className="grid gap-4 px-6 pb-6 sm:grid-cols-6">
               <DesignImageSection
+                title="Front/Back Mens Design"
+                design={customer.frontBackMens}
+                images={frontBackMensDesignImages}
+                measurementValue={(customer.frontBackMensValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Front/Back Ladies Design"
+                design={customer.frontBackLadies}
+                images={frontBackLadiesDesignImages}
+                measurementValue={(customer.frontBackLadiesValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Waistcoat Design"
+                design={customer.waistcoat}
+                images={waistcoatDesignImages}
+                measurementValue={(customer.waistcoatValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Ladies Flair Design"
+                design={customer.ladiesFlair}
+                images={ladiesFlairDesignImages}
+                measurementValue={(customer.ladiesFlairValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
                 title="Neck Design"
                 design={customer.collarDesign || customer.neckDesign}
                 images={neckDesignImages}
                 measurementValue={(customer.neckDesignValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Sleeve Design"
+                design={customer.sleeveStyle}
+                images={sleeveStyleDesignImages}
+                measurementValue={(customer.sleeveStyleValue || "").trim()}
                 unit={customer.measurementUnit || "inch"}
               />
               <DesignImageSection
@@ -356,6 +443,13 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 design={customer.frontStrip}
                 images={frontStripDesignImages}
                 measurementValue={(customer.frontStripValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+              <DesignImageSection
+                title="Shoulder Design"
+                design={customer.shoulderTera}
+                images={shoulderTeraDesignImages}
+                measurementValue={(customer.shoulderTeraValue || "").trim()}
                 unit={customer.measurementUnit || "inch"}
               />
               <DesignImageSection

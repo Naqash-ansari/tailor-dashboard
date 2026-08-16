@@ -60,10 +60,20 @@ type FormState = {
     elastic: string;
     fittingStyle: string;
     seamStyle: string;
+    frontBackMens: string;
+    frontBackMensValue: string;
+    frontBackLadies: string;
+    frontBackLadiesValue: string;
+    waistcoat: string;
+    waistcoatValue: string;
+    ladiesFlair: string;
+    ladiesFlairValue: string;
     neckDetail: string;
     neckDesignValue: string;
     frontStrip: string;
     frontStripValue: string;
+    shoulderTera: string;
+    shoulderTeraValue: string;
     shoulderStrapDetail: string;
     shoulderStrapValue: string;
     pocket: string;
@@ -71,6 +81,7 @@ type FormState = {
     pocketFlaps: string;
     pocketFlapsValue: string;
     sleeveStyle: string;
+    sleeveStyleValue: string;
     wristCuffStyle: string;
     cuffDesignValue: string;
     ghairaBottomDetail: string;
@@ -148,10 +159,20 @@ const initialState: FormState = {
     elastic: "",
     fittingStyle: "",
     seamStyle: "",
+    frontBackMens: "",
+    frontBackMensValue: "",
+    frontBackLadies: "",
+    frontBackLadiesValue: "",
+    waistcoat: "",
+    waistcoatValue: "",
+    ladiesFlair: "",
+    ladiesFlairValue: "",
     neckDetail: "",
     neckDesignValue: "",
     frontStrip: "",
     frontStripValue: "",
+    shoulderTera: "",
+    shoulderTeraValue: "",
     shoulderStrapDetail: "",
     shoulderStrapValue: "",
     pocket: "",
@@ -159,6 +180,7 @@ const initialState: FormState = {
     pocketFlaps: "",
     pocketFlapsValue: "",
     sleeveStyle: "",
+    sleeveStyleValue: "",
     wristCuffStyle: "",
     cuffDesignValue: "",
     ghairaBottomDetail: "",
@@ -284,10 +306,20 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
         elastic: customer.elastic ? "yes" : "",
         fittingStyle: customer.fittingStyle,
         seamStyle: customer.seamStyle,
+        frontBackMens: customer.frontBackMens,
+        frontBackMensValue: customer.frontBackMensValue,
+        frontBackLadies: customer.frontBackLadies,
+        frontBackLadiesValue: customer.frontBackLadiesValue,
+        waistcoat: customer.waistcoat,
+        waistcoatValue: customer.waistcoatValue,
+        ladiesFlair: customer.ladiesFlair,
+        ladiesFlairValue: customer.ladiesFlairValue,
         neckDetail: customer.collarDesign || customer.neckDesign,
         neckDesignValue: customer.neckDesignValue,
         frontStrip: customer.frontStrip,
         frontStripValue: customer.frontStripValue,
+        shoulderTera: customer.shoulderTera,
+        shoulderTeraValue: customer.shoulderTeraValue,
         shoulderStrapDetail: customer.shoulderStrapDetail,
         shoulderStrapValue: customer.shoulderStrapValue,
         pocket: customer.pocketStyle,
@@ -295,6 +327,7 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
         pocketFlaps: customer.pocketFlaps,
         pocketFlapsValue: customer.pocketFlapsValue,
         sleeveStyle: customer.sleeveStyle,
+        sleeveStyleValue: customer.sleeveStyleValue,
         wristCuffStyle: customer.wristCuffStyle,
         cuffDesignValue: customer.cuffDesignValue,
         ghairaBottomDetail: customer.ghairaBottomDetail,
@@ -465,11 +498,53 @@ function SelectField({
 
 type ImageChoiceOption = { value: string; image: string };
 
+const frontBackMensOptions: ImageChoiceOption[] = [
+    { value: "Curved Hem", image: "/front-back-mens/curved-hem.png" },
+    { value: "Rounded Hem", image: "/front-back-mens/rounded-hem.png" },
+    { value: "Straight Hem", image: "/front-back-mens/straight-hem.png" },
+    { value: "Angled Collar", image: "/front-back-mens/angled-collar.png" },
+    { value: "Placket Front", image: "/front-back-mens/placket-front.png" },
+    { value: "Curved Placket", image: "/front-back-mens/curved-placket.png" },
+    { value: "Dart Panel", image: "/front-back-mens/dart-panel.png" }
+];
+
+const frontBackLadiesOptions: ImageChoiceOption[] = [
+    { value: "Straight Bodice", image: "/front-back-ladies/straight-bodice.png" },
+    { value: "Curved Bodice", image: "/front-back-ladies/curved-bodice.png" },
+    { value: "Dart Bodice", image: "/front-back-ladies/dart-bodice.png" },
+    { value: "Flared Bodice", image: "/front-back-ladies/flared-bodice.png" },
+    { value: "Draped Bodice", image: "/front-back-ladies/draped-bodice.png" },
+    { value: "Double Dart Bodice", image: "/front-back-ladies/double-dart-bodice.png" }
+];
+
+const waistcoatOptions: ImageChoiceOption[] = [
+    { value: "Straight Hem", image: "/waistcoat/straight-hem.png" },
+    { value: "Notched Front", image: "/waistcoat/notched-front.png" },
+    { value: "Stepped Hem", image: "/waistcoat/stepped-hem.png" },
+    { value: "Angled Hem Right", image: "/waistcoat/angled-hem-right.png" },
+    { value: "Angled Hem Left", image: "/waistcoat/angled-hem-left.png" }
+];
+
+const ladiesFlairOptions: ImageChoiceOption[] = [
+    { value: "Curved Flair", image: "/ladies-flair/curved-flair.png" },
+    { value: "A-Line Flair", image: "/ladies-flair/a-line-flair.png" },
+    { value: "Straight Panel", image: "/ladies-flair/straight-panel.png" },
+    { value: "Box Pleat Flair", image: "/ladies-flair/box-pleat-flair.png" },
+    { value: "Gathered Panel", image: "/ladies-flair/gathered-panel.png" }
+];
+
 const neckDesignOptions: ImageChoiceOption[] = [
     { value: "Curved", image: "/neck/curved-ban.png" },
     { value: "Straight", image: "/neck/straight-ban.png" },
     { value: "Double", image: "/neck/double-ban.png" },
     { value: "Stepped", image: "/neck/stepped-ban.png" }
+];
+
+const sleeveStyleOptions: ImageChoiceOption[] = [
+    { value: "Long Tapered", image: "/sleeve/long-tapered.png" },
+    { value: "Wide Tapered", image: "/sleeve/wide-tapered.png" },
+    { value: "Narrow Tapered", image: "/sleeve/narrow-tapered.png" },
+    { value: "Sleeve Cap", image: "/sleeve/sleeve-cap.png" }
 ];
 
 const cuffDesignOptions: ImageChoiceOption[] = [
@@ -484,6 +559,11 @@ const frontStripOptions: ImageChoiceOption[] = [
     { value: "Straight", image: "/strip/straight-plain.png" },
     { value: "Pointed with Notch", image: "/strip/pointed-notch.png" },
     { value: "Straight with Notch", image: "/strip/straight-notch.png" }
+];
+
+const shoulderTeraOptions: ImageChoiceOption[] = [
+    { value: "Curved Notch", image: "/shoulder-tera/curved-notch.png" },
+    { value: "Angled Notch", image: "/shoulder-tera/angled-notch.png" }
 ];
 
 const shoulderStrapOptions: ImageChoiceOption[] = [
@@ -503,14 +583,19 @@ const zipOptions: ImageChoiceOption[] = [
 ];
 
 const shalwarStyleOptions: ImageChoiceOption[] = [
-    { value: "Regular Cut", image: "/shalwar/regular-cut.svg" },
-    { value: "Narrow Cut", image: "/shalwar/narrow-cut.svg" },
-    { value: "Pleated Cut", image: "/shalwar/pleated-cut.svg" }
+    { value: "Pleated Top", image: "/shalwar/pleated-top.png" },
+    { value: "Seamed Cut", image: "/shalwar/seamed-cut.png" },
+    { value: "Plain Cut", image: "/shalwar/plain-cut.png" },
+    { value: "Pleated Bottom", image: "/shalwar/pleated-bottom.png" }
 ];
 
 const pantTrouserOptions: ImageChoiceOption[] = [
-    { value: "Tapered Cut", image: "/pant/tapered-cut.png" },
-    { value: "Straight Cut", image: "/pant/straight.png" }
+    { value: "Tapered Leg", image: "/pant-trouser/tapered-leg.png" },
+    { value: "Straight Leg", image: "/pant-trouser/straight-leg.png" },
+    { value: "Fitted Leg", image: "/pant-trouser/fitted-leg.png" },
+    { value: "Cutting Guide", image: "/pant-trouser/cutting-guide.png" },
+    { value: "Waistband Panel", image: "/pant-trouser/waistband-panel.png" },
+    { value: "Full Leg Pattern", image: "/pant-trouser/full-leg-pattern.png" }
 ];
 
 const pocketOptions: ImageChoiceOption[] = [
@@ -572,10 +657,7 @@ function ImageChoiceField({
                     <span className="text-slate-400 transition group-open:rotate-180">▾</span>
                 </summary>
                 <div className="absolute z-10 mt-2 w-full rounded-md border border-[#d8ccb9] bg-white p-3 shadow-lg">
-                    <div
-                        className="grid gap-3"
-                        style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
-                    >
+                    <div className="grid grid-cols-3 gap-3">
                         {options.map((option) => (
                             <label
                                 key={option.value}
@@ -799,10 +881,20 @@ export function CustomerOrderForm() {
         zipValue: form.zipValue,
         fittingStyle: form.fittingStyle,
         seamStyle: form.seamStyle,
+        frontBackMens: form.frontBackMens,
+        frontBackMensValue: form.frontBackMensValue,
+        frontBackLadies: form.frontBackLadies,
+        frontBackLadiesValue: form.frontBackLadiesValue,
+        waistcoat: form.waistcoat,
+        waistcoatValue: form.waistcoatValue,
+        ladiesFlair: form.ladiesFlair,
+        ladiesFlairValue: form.ladiesFlairValue,
         neckDesign: form.neckDetail,
         neckDesignValue: form.neckDesignValue,
         frontStrip: form.frontStrip,
         frontStripValue: form.frontStripValue,
+        shoulderTera: form.shoulderTera,
+        shoulderTeraValue: form.shoulderTeraValue,
         shoulderStrapDetail: form.shoulderStrapDetail,
         shoulderStrapValue: form.shoulderStrapValue,
         pocketStyle: form.pocket,
@@ -810,6 +902,7 @@ export function CustomerOrderForm() {
         pocketFlaps: form.pocketFlaps,
         pocketFlapsValue: form.pocketFlapsValue,
         sleeveStyle: form.sleeveStyle,
+        sleeveStyleValue: form.sleeveStyleValue,
         wristCuffStyle: form.wristCuffStyle,
         cuffDesignValue: form.cuffDesignValue,
         ghairaBottomDetail: form.ghairaBottomDetail,
@@ -1020,6 +1113,54 @@ export function CustomerOrderForm() {
                                 ]}
                             />
                             <ImageChoiceField
+                                label="Front/Back Mens"
+                                value={form.frontBackMens}
+                                onChange={(value) => setForm((current) => ({ ...current, frontBackMens: value }))}
+                                options={frontBackMensOptions}
+                                extraField={{
+                                    label: "Front/Back Mens Value",
+                                    value: form.frontBackMensValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, frontBackMensValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Front/Back Ladies"
+                                value={form.frontBackLadies}
+                                onChange={(value) => setForm((current) => ({ ...current, frontBackLadies: value }))}
+                                options={frontBackLadiesOptions}
+                                extraField={{
+                                    label: "Front/Back Ladies Value",
+                                    value: form.frontBackLadiesValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, frontBackLadiesValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Waistcoat"
+                                value={form.waistcoat}
+                                onChange={(value) => setForm((current) => ({ ...current, waistcoat: value }))}
+                                options={waistcoatOptions}
+                                extraField={{
+                                    label: "Waistcoat Value",
+                                    value: form.waistcoatValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, waistcoatValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Ladies Flair"
+                                value={form.ladiesFlair}
+                                onChange={(value) => setForm((current) => ({ ...current, ladiesFlair: value }))}
+                                options={ladiesFlairOptions}
+                                extraField={{
+                                    label: "Ladies Flair Value",
+                                    value: form.ladiesFlairValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, ladiesFlairValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
                                 label="Neck"
                                 value={form.neckDetail}
                                 onChange={(value) => setForm((current) => ({ ...current, neckDetail: value }))}
@@ -1041,6 +1182,18 @@ export function CustomerOrderForm() {
                                     value: form.frontStripValue,
                                     onChange: (value) =>
                                         setForm((current) => ({ ...current, frontStripValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Shoulder"
+                                value={form.shoulderTera}
+                                onChange={(value) => setForm((current) => ({ ...current, shoulderTera: value }))}
+                                options={shoulderTeraOptions}
+                                extraField={{
+                                    label: "Shoulder Value",
+                                    value: form.shoulderTeraValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, shoulderTeraValue: value }))
                                 }}
                             />
                             <ImageChoiceField
@@ -1079,7 +1232,18 @@ export function CustomerOrderForm() {
                                         setForm((current) => ({ ...current, pocketFlapsValue: value }))
                                 }}
                             />
-                            <Field label="Sleeve" name="sleeveStyle" value={form.sleeveStyle} onChange={handleChange} />
+                            <ImageChoiceField
+                                label="Sleeve"
+                                value={form.sleeveStyle}
+                                onChange={(value) => setForm((current) => ({ ...current, sleeveStyle: value }))}
+                                options={sleeveStyleOptions}
+                                extraField={{
+                                    label: "Sleeve Value",
+                                    value: form.sleeveStyleValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, sleeveStyleValue: value }))
+                                }}
+                            />
                             <ImageChoiceField
                                 label="Wrist / Cuff"
                                 value={form.wristCuffStyle}

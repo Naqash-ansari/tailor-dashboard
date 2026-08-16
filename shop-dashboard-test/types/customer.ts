@@ -69,10 +69,20 @@ export type TailorCustomer = {
   frontPocket: boolean;
   fittingStyle: string;
   seamStyle: string;
+  frontBackMens: string;
+  frontBackMensValue: string;
+  frontBackLadies: string;
+  frontBackLadiesValue: string;
+  waistcoat: string;
+  waistcoatValue: string;
+  ladiesFlair: string;
+  ladiesFlairValue: string;
   neckDesign: string;
   neckDesignValue: string;
   frontStrip: string;
   frontStripValue: string;
+  shoulderTera: string;
+  shoulderTeraValue: string;
   shoulderStrapDetail: string;
   shoulderStrapValue: string;
   pocketStyle: string;
@@ -80,6 +90,7 @@ export type TailorCustomer = {
   pocketFlaps: string;
   pocketFlapsValue: string;
   sleeveStyle: string;
+  sleeveStyleValue: string;
   wristCuffStyle: string;
   cuffDesignValue: string;
   ghairaBottomDetail: string;
@@ -170,10 +181,20 @@ export const emptyCustomerForm: CustomerFormValues = {
   frontPocket: false,
   fittingStyle: "",
   seamStyle: "",
+  frontBackMens: "",
+  frontBackMensValue: "",
+  frontBackLadies: "",
+  frontBackLadiesValue: "",
+  waistcoat: "",
+  waistcoatValue: "",
+  ladiesFlair: "",
+  ladiesFlairValue: "",
   neckDesign: "",
   neckDesignValue: "",
   frontStrip: "",
   frontStripValue: "",
+  shoulderTera: "",
+  shoulderTeraValue: "",
   shoulderStrapDetail: "",
   shoulderStrapValue: "",
   pocketStyle: "",
@@ -181,6 +202,7 @@ export const emptyCustomerForm: CustomerFormValues = {
   pocketFlaps: "",
   pocketFlapsValue: "",
   sleeveStyle: "",
+  sleeveStyleValue: "",
   wristCuffStyle: "",
   cuffDesignValue: "",
   ghairaBottomDetail: "",
