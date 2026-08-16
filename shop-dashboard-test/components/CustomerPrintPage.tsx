@@ -8,11 +8,11 @@ import type { TailorCustomer } from "@/types/customer";
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-white/10 py-1.5 last:border-b-0">
-      <span className="text-xs font-semibold uppercase tracking-wide text-[#e8dfd2]">
-        {label}
+    <div className="flex items-center gap-1 whitespace-nowrap">
+      <span className="text-[9px] font-semibold uppercase tracking-wide text-[#e8dfd2]">
+        {label}:
       </span>
-      <span className="text-sm font-bold text-white">{value}</span>
+      <span className="text-[10px] font-bold text-white">{value}</span>
     </div>
   );
 }
@@ -82,7 +82,7 @@ function MeasurementSection({
   }
 
   return (
-    <div className="rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-4">
+    <div className="rounded-lg  bg-[#fbfaf7] p-4">
       <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">{title}</h3>
       <div className="mt-3 grid gap-2">
         {rows.map(([label, value]) => (
@@ -226,13 +226,17 @@ function DesignImageSection({
   design,
   images,
   measurementValue,
-  unit
+  unit,
+  imageHeight = "h-14",
+  imageWidth = "w-full"
 }: {
   title: string;
   design: string;
   images: Record<string, string>;
   measurementValue: string;
   unit: string;
+  imageHeight?: string;
+  imageWidth?: string;
 }) {
   const image = design ? images[design] : undefined;
 
@@ -241,23 +245,25 @@ function DesignImageSection({
   }
 
   return (
-    <div className="rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-3">
+    <div className="rounded-lg ">
       {/* <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">{title}</h3> */}
-      <div className="mt-2 flex flex-col items-center gap-1.5 rounded-md bg-white p-3">
-        <Image
-          src={image}
-          alt={`${design} ${title}`}
-          width={100}
-          height={50}
-          unoptimized
-          className="h-10 w-auto object-contain"
-        />
+      <div className="flex flex-col items-center gap-1.5">
+        <div className={`${imageHeight} ${imageWidth}`}>
+          <Image
+            src={image}
+            alt={`${design} ${title}`}
+            width={280}
+            height={200}
+            unoptimized
+            className="h-full w-full object-contain object-top"
+          />
+        </div>
         {measurementValue ? (
           <div className="text-center leading-none">
             <p className="text-sm font-black text-[#0d6b5f]">{measurementValue}</p>
-            <p className="mt-0.5 text-[9px] font-bold uppercase tracking-wide text-[#0d6b5f]/70">
+            {/* <p className="mt-0.5 text-[9px] font-bold uppercase tracking-wide text-[#0d6b5f]/70">
               {unit}
-            </p>
+            </p> */}
           </div>
         ) : null}
         {/* <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
@@ -333,32 +339,26 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
         ) : null}
 
         {customer ? (
-          <section className="a4-print-area rounded-lg border border-[#e1d6c4] bg-white shadow-sm">
-            <div className="rounded-t-lg bg-[#122b2a] p-6 text-white">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white p-1.5">
+          <section className="a4-print-area rounded-lg  bg-white shadow-sm">
+            <div className="rounded-t-lg bg-[#122b2a] p-3 text-white">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-row items-center gap-2">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white p-1">
                     <Image
                       src="/brand/aans-fabric-logo-icon.png"
                       alt="Aans Fabrics & Tailors Ltd logo"
-                      width={56}
-                      height={56}
+                      width={32}
+                      height={32}
                       className="h-full w-full object-contain"
                     />
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#f3d68c]">
-                      Tailor measurement form
-                    </p>
-                    <h1 className="brand-name mt-1 text-2xl font-bold sm:text-3xl">Aans Fabrics & Tailors Ltd</h1>
-                  </div>
+                  <h1 className="brand-name text-base font-bold sm:text-lg">Aans Fabrics & Tailors Ltd</h1>
                 </div>
-                <div className="w-full rounded-lg border border-white/15 bg-white/10 p-4 sm:w-auto sm:min-w-[220px]">
+                <div className="flex w-full flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg border border-white/15 bg-white/10 px-3 py-1.5 sm:w-auto">
                   <DetailRow label="Customer" value={customer.customerName || "-"} />
                   <DetailRow label="Phone" value={customer.phoneNumber || "-"} />
                   <DetailRow label="Order ID" value={customer.customerIdNumber || "-"} />
                   <DetailRow label="Delivery" value={customer.deliveryDate || "-"} />
-                  <DetailRow label="Status" value={customer.orderStatus} />
                 </div>
               </div>
             </div>
@@ -374,21 +374,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 customer={customer}
               />
             </div>
-            <div className="grid gap-4 px-6 pb-6 sm:grid-cols-6">
-              <DesignImageSection
-                title="Front/Back Mens Design"
-                design={customer.frontBackMens}
-                images={frontBackMensDesignImages}
-                measurementValue={(customer.frontBackMensValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Front/Back Ladies Design"
-                design={customer.frontBackLadies}
-                images={frontBackLadiesDesignImages}
-                measurementValue={(customer.frontBackLadiesValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
+            <div className="grid gap-4 px-6 pb-6 sm:grid-cols-4">
               <DesignImageSection
                 title="Waistcoat Design"
                 design={customer.waistcoat}
@@ -425,24 +411,10 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 unit={customer.measurementUnit || "inch"}
               />
               <DesignImageSection
-                title="Pocket Design"
-                design={customer.pocketStyle}
-                images={pocketDesignImages}
-                measurementValue={(customer.pocketStyleValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
                 title="Pocket Flaps Design"
                 design={customer.pocketFlaps}
                 images={pocketFlapsDesignImages}
                 measurementValue={(customer.pocketFlapsValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Front Strip Design"
-                design={customer.frontStrip}
-                images={frontStripDesignImages}
-                measurementValue={(customer.frontStripValue || "").trim()}
                 unit={customer.measurementUnit || "inch"}
               />
               <DesignImageSection
@@ -474,11 +446,59 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 unit={customer.measurementUnit || "inch"}
               />
               <DesignImageSection
+                title="Ankle / Pancha Design"
+                design={customer.anklePancha}
+                images={anklePanchaDesignImages}
+                measurementValue={(customer.anklePanchaValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+              />
+            </div>
+
+            <div className="grid gap-4 px-6 pb-6 sm:grid-cols-6">
+              <DesignImageSection
+                title="Pocket Design"
+                design={customer.pocketStyle}
+                images={pocketDesignImages}
+                measurementValue={(customer.pocketStyleValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+                imageHeight="h-44"
+                imageWidth="w-full"
+              />
+              <DesignImageSection
+                title="Front Strip Design"
+                design={customer.frontStrip}
+                images={frontStripDesignImages}
+                measurementValue={(customer.frontStripValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+                imageHeight="h-44"
+                imageWidth="w-full"
+              />
+              <DesignImageSection
+                title="Front/Back Mens Design"
+                design={customer.frontBackMens}
+                images={frontBackMensDesignImages}
+                measurementValue={(customer.frontBackMensValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+                imageHeight="h-44"
+                imageWidth="w-full"
+              />
+              <DesignImageSection
+                title="Front/Back Ladies Design"
+                design={customer.frontBackLadies}
+                images={frontBackLadiesDesignImages}
+                measurementValue={(customer.frontBackLadiesValue || "").trim()}
+                unit={customer.measurementUnit || "inch"}
+                imageHeight="h-44"
+                imageWidth="w-full"
+              />
+              <DesignImageSection
                 title="Shalwar Design"
                 design={customer.shalwarStyle}
                 images={shalwarStyleDesignImages}
                 measurementValue={(customer.shalwarStyleValue || "").trim()}
                 unit={customer.measurementUnit || "inch"}
+                imageHeight="h-44"
+                imageWidth="w-full"
               />
               <DesignImageSection
                 title="Pant / Trouser Design"
@@ -486,13 +506,8 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 images={pantTrouserDesignImages}
                 measurementValue={(customer.pantTrouserStyleValue || "").trim()}
                 unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Ankle / Pancha Design"
-                design={customer.anklePancha}
-                images={anklePanchaDesignImages}
-                measurementValue={(customer.anklePanchaValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
+                imageHeight="h-44"
+                imageWidth="w-full"
               />
             </div>
           </section>

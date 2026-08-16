@@ -183,9 +183,9 @@ export function DashboardHome() {
                     />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold uppercase tracking-wide text-[#d8b05b]">
+                    {/* <p className="text-sm font-semibold uppercase tracking-wide text-[#d8b05b]">
                       Tailor dashboard
-                    </p>
+                    </p> */}
                     <h1 className="brand-name mt-2 text-3xl font-bold text-white sm:text-4xl">
                       Aans Fabrics & Tailors Ltd
                     </h1>
