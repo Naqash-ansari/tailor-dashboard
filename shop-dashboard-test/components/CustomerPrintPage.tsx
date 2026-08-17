@@ -352,7 +352,10 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                       className="h-full w-full object-contain"
                     />
                   </div>
-                  <h1 className="brand-name text-base font-bold sm:text-lg">Aans Fabrics & Tailors Ltd</h1>
+                  <div>
+                    <h1 className="brand-name text-base font-bold sm:text-lg">Aans Fabrics & Tailors Ltd</h1>
+                    <p className="text-[15px] font-semibold text-[#e8dfd2]">0161 509 7737, 07915 253239</p>
+                  </div>
                 </div>
                 <div className="flex w-full flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg border border-white/15 bg-white/10 px-3 py-1.5 sm:w-auto">
                   <DetailRow label="Customer" value={customer.customerName || "-"} />
@@ -364,12 +367,12 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
             </div>
             <div className="grid gap-4 p-6 sm:grid-cols-2">
               <MeasurementSection
-                title="Upper Body Measurements"
+                title={customer.upperGarmentPart || "Upper Body Measurements"}
                 fields={upperBodyFields}
                 customer={customer}
               />
               <MeasurementSection
-                title="Lower Body Measurements"
+                title={customer.lowerGarmentPart || "Lower Body Measurements"}
                 fields={lowerBodyFields}
                 customer={customer}
               />

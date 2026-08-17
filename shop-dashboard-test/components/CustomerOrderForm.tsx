@@ -17,6 +17,8 @@ type FormState = {
     address: string;
     measurementUnit: string;
     measurementType: string;
+    upperGarmentPart: string;
+    lowerGarmentPart: string;
     qameezLength: string;
     shalwarLength: string;
     blouseLength: string;
@@ -116,6 +118,8 @@ const initialState: FormState = {
     address: "",
     measurementUnit: "in",
     measurementType: "",
+    upperGarmentPart: "",
+    lowerGarmentPart: "",
     qameezLength: "",
     shalwarLength: "",
     blouseLength: "",
@@ -263,6 +267,8 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
         address: customer.address,
         measurementUnit: customer.measurementUnit === "cm" ? "cm" : "in",
         measurementType: customer.measurementType || customer.outfitType,
+        upperGarmentPart: customer.upperGarmentPart,
+        lowerGarmentPart: customer.lowerGarmentPart,
         qameezLength: customer.qameezLength,
         shalwarLength: customer.shalwarLength,
         blouseLength: customer.blouseLength,
@@ -397,6 +403,96 @@ function getGarmentOptions(category: "Men" | "Women") {
     ];
 }
 
+const upperGarmentPartOptions = [
+    { value: "", label: "Select upper garment" },
+    { value: "Kurta", label: "Kurta" },
+    { value: "Shirt", label: "Shirt" },
+    { value: "Coat", label: "Coat" },
+    { value: "Shirt & Coat", label: "Shirt & Coat" },
+    { value: "Waistcoat", label: "Waistcoat" },
+    { value: "Blouse", label: "Blouse" },
+    { value: "Gown", label: "Gown" },
+    { value: "None", label: "None" }
+];
+
+const lowerGarmentPartOptions = [
+    { value: "", label: "Select lower garment" },
+    { value: "Shalwar", label: "Shalwar" },
+    { value: "Trouser", label: "Trouser" },
+    { value: "Skirt", label: "Skirt" },
+    { value: "None", label: "None" }
+];
+
+const garmentUpperPartMap: Record<string, string> = {
+    "Normal suit": "Kurta",
+    "Three piece suit": "Coat",
+    "Two piece suit": "Coat",
+    "Shirt and trouser": "Shirt",
+    "Pant coat": "Shirt & Coat",
+    Waistcoat: "Waistcoat",
+    Sherwani: "Coat",
+    "Salwar kameez": "Kurta",
+    "Kurta pajama": "Kurta",
+    "Kurta salwar": "Kurta",
+    "Prince coat": "Coat",
+    Blazer: "Coat",
+    "Dress shirt": "Shirt",
+    "Dress pants": "None",
+    "Ladies normal suit": "Kurta",
+    "Ladies three piece suit": "Shirt",
+    "Kameez shalwar": "Kurta",
+    "Kameez trouser": "Kurta",
+    "Patiala suit": "Kurta",
+    "Ladies pants": "None",
+    Kurti: "Kurta",
+    "Long shirt": "Shirt",
+    Frock: "Gown",
+    Gown: "Gown",
+    Maxi: "Gown",
+    Lehenga: "Blouse",
+    Sharara: "Kurta",
+    Gharara: "Kurta",
+    Abaya: "Gown",
+    Blouse: "Blouse",
+    "Ladies waistcoat": "Waistcoat",
+    "Ladies coat / blazer": "Coat"
+};
+
+const garmentLowerPartMap: Record<string, string> = {
+    "Normal suit": "Shalwar",
+    "Three piece suit": "Trouser",
+    "Two piece suit": "Trouser",
+    "Shirt and trouser": "Trouser",
+    "Pant coat": "Trouser",
+    Waistcoat: "None",
+    Sherwani: "Shalwar",
+    "Salwar kameez": "Shalwar",
+    "Kurta pajama": "Shalwar",
+    "Kurta salwar": "Shalwar",
+    "Prince coat": "Trouser",
+    Blazer: "None",
+    "Dress shirt": "None",
+    "Dress pants": "Trouser",
+    "Ladies normal suit": "Shalwar",
+    "Ladies three piece suit": "Trouser",
+    "Kameez shalwar": "Shalwar",
+    "Kameez trouser": "Trouser",
+    "Patiala suit": "Shalwar",
+    "Ladies pants": "Trouser",
+    Kurti: "None",
+    "Long shirt": "None",
+    Frock: "Skirt",
+    Gown: "Skirt",
+    Maxi: "Skirt",
+    Lehenga: "Skirt",
+    Sharara: "Shalwar",
+    Gharara: "Shalwar",
+    Abaya: "None",
+    Blouse: "None",
+    "Ladies waistcoat": "None",
+    "Ladies coat / blazer": "None"
+};
+
 function sanitizeDecimalInput(value: string) {
     const cleaned = value.replace(/[^0-9.]/g, "");
     const [first, ...rest] = cleaned.split(".");
@@ -492,6 +588,44 @@ function SelectField({
                     </option>
                 ))}
             </select>
+        </label>
+    );
+}
+
+function ComboField({
+    label,
+    name,
+    value,
+    onChange,
+    options
+}: {
+    label: string;
+    name: keyof FormState;
+    value: string;
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    options: Array<{ value: string; label: string }>;
+}) {
+    const listId = `${name}-options`;
+
+    return (
+        <label className="block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">{label}</span>
+            <input
+                className={inputClass}
+                name={name}
+                list={listId}
+                value={value}
+                onChange={onChange}
+                placeholder={`Select or type ${label.toLowerCase()}`}
+                autoComplete="off"
+            />
+            <datalist id={listId}>
+                {options
+                    .filter((option) => option.value)
+                    .map((option) => (
+                        <option key={option.value} value={option.value} />
+                    ))}
+            </datalist>
         </label>
     );
 }
@@ -813,6 +947,14 @@ export function CustomerOrderForm() {
                 };
             }
 
+            if (name === "measurementType") {
+                return {
+                    ...nextValues,
+                    upperGarmentPart: garmentUpperPartMap[sanitizedValue] ?? "",
+                    lowerGarmentPart: garmentLowerPartMap[sanitizedValue] ?? ""
+                };
+            }
+
             return nextValues;
         });
     };
@@ -834,6 +976,8 @@ export function CustomerOrderForm() {
         customerCategory: form.customerCategory === "Women" ? "Ladies" : "Men",
         outfitType: form.measurementType || "Normal suit",
         measurementType: form.measurementType,
+        upperGarmentPart: form.upperGarmentPart,
+        lowerGarmentPart: form.lowerGarmentPart,
         measurementUnit: form.measurementUnit === "cm" ? "cm" : "inch",
         qameezLength: form.qameezLength,
         blouseLength: form.blouseLength,
@@ -992,6 +1136,25 @@ export function CustomerOrderForm() {
                                     { value: "Women", label: "Women" }
                                 ]}
                             />
+                            {form.customerCategory ? (
+                                <SelectField
+                                    label="Garment Type"
+                                    name="measurementType"
+                                    value={form.measurementType}
+                                    onChange={handleChange}
+                                    options={getGarmentOptions(form.customerCategory)}
+                                />
+                            ) : null}
+                            <SelectField
+                                label="Measurement Unit (for all measurements)"
+                                name="measurementUnit"
+                                value={form.measurementUnit}
+                                onChange={handleChange}
+                                options={[
+                                    { value: "in", label: "Inches (in)" },
+                                    { value: "cm", label: "Centimetres (cm)" }
+                                ]}
+                            />
                             <Field label="ID" name="id" value={form.id} onChange={handleChange} type="text" readOnly />
                             <TextAreaField label="Address" name="address" value={form.address} onChange={handleChange} />
                         </div>
@@ -1004,28 +1167,14 @@ export function CustomerOrderForm() {
                                 Select one unit below. It will apply to all upper and lower body measurements.
                             </p> */}
                         </div>
-                        <div className="mb-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            <SelectField
-                                label="Measurement Unit (for all measurements)"
-                                name="measurementUnit"
-                                value={form.measurementUnit}
-                                onChange={handleChange}
-                                options={[
-                                    { value: "in", label: "Inches (in)" },
-                                    { value: "cm", label: "Centimetres (cm)" }
-                                ]}
-                            />
-                            {form.customerCategory ? (
-                                <SelectField
-                                    label="Garment Type"
-                                    name="measurementType"
-                                    value={form.measurementType}
-                                    onChange={handleChange}
-                                    options={getGarmentOptions(form.customerCategory)}
-                                />
-                            ) : null}
-                        </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                            <ComboField
+                                label="Upper Garment"
+                                name="upperGarmentPart"
+                                value={form.upperGarmentPart}
+                                onChange={handleChange}
+                                options={upperGarmentPartOptions}
+                            />
                             <Field label="Length" name="qameezLength" value={form.qameezLength} onChange={handleChange} />
                             <Field label="Blouse Length" name="blouseLength" value={form.blouseLength} onChange={handleChange} />
                             <Field label="Ghaira / Bottom" name="ghairaBottom" value={form.ghairaBottom} onChange={handleChange} />
@@ -1060,6 +1209,13 @@ export function CustomerOrderForm() {
                             </p> */}
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                            <ComboField
+                                label="Lower Garment"
+                                name="lowerGarmentPart"
+                                value={form.lowerGarmentPart}
+                                onChange={handleChange}
+                                options={lowerGarmentPartOptions}
+                            />
                             <Field label="Length" name="shalwarLength" value={form.shalwarLength} onChange={handleChange} />
                             <Field label="Skirt Length" name="skirtLength" value={form.skirtLength} onChange={handleChange} />
                             <Field label="Choli / Frill Length" name="choliFrillLength" value={form.choliFrillLength} onChange={handleChange} />

@@ -16,6 +16,8 @@ export type TailorCustomer = {
   outfitType: string;
   measurementType: string;
   measurementUnit: MeasurementUnit;
+  upperGarmentPart: string;
+  lowerGarmentPart: string;
   qameezLength: string;
   blouseLength: string;
   ghairaBottom: string;
@@ -128,6 +130,8 @@ export const emptyCustomerForm: CustomerFormValues = {
   outfitType: "Normal suit",
   measurementType: "",
   measurementUnit: "inch",
+  upperGarmentPart: "",
+  lowerGarmentPart: "",
   qameezLength: "",
   blouseLength: "",
   ghairaBottom: "",
