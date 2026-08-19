@@ -59,9 +59,9 @@ export function CustomerLabelPage({ customerId }: { customerId: string }) {
         <section className="label-print-area mx-auto flex aspect-[105/148] w-full max-w-xs border border-slate-950 bg-white">
           <div className="relative flex-[2] border-r border-slate-950">
             <div className="absolute inset-0 flex -rotate-90 flex-col items-center justify-center gap-1 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              {/* <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Customer Address
-              </p>
+              </p> */}
               <p className="mt-1 text-lg font-bold leading-snug text-slate-950">
                 {customer.customerName || "-"}
               </p>
