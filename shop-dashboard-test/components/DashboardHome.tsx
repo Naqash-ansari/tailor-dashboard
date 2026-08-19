@@ -25,7 +25,7 @@ function parseAmount(value: string) {
 }
 
 function formatAmount(value: number) {
-  return new Intl.NumberFormat("en-PK", {
+  return new Intl.NumberFormat("en-GB", {
     maximumFractionDigits: 0
   }).format(value);
 }
@@ -151,7 +151,7 @@ export function DashboardHome() {
     },
     {
       label: "Pending payments",
-      value: `Rs ${formatAmount(dashboardStats.pendingPayments)}`,
+      value: `£${formatAmount(dashboardStats.pendingPayments)}`,
       hint: "Remaining balance",
       accent: "bg-[#7f1d1d]"
     },
@@ -333,7 +333,7 @@ export function DashboardHome() {
             <div className="mt-6 rounded-lg bg-[#122b2a] p-5 text-white">
               <p className="text-sm text-[#e8dfd2]">Pending balance</p>
               <p className="mt-2 text-3xl font-bold">
-                Rs {formatAmount(dashboardStats.pendingPayments)}
+                £{formatAmount(dashboardStats.pendingPayments)}
               </p>
               <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/15">
                 <div className="dashboard-progress h-full w-2/3 rounded-full bg-[#d8b05b]" />
@@ -408,7 +408,7 @@ export function DashboardHome() {
                         </div>
                       </td>
                       <td className="px-5 py-4 text-slate-700">
-                        Rs {customer.remainingPayment || "0"} remaining
+                        £{customer.remainingPayment || "0"} remaining
                       </td>
                     </tr>
                   ))

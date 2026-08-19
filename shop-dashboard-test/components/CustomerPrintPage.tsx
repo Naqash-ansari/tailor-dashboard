@@ -33,7 +33,7 @@ const upperBodyFields: Array<[string, keyof TailorCustomer]> = [
   ["Upper Back", "upperBack"],
   ["Cross Back", "crossBack"],
   ["Waist", "waistWidth"],
-  ["Hip", "hip"],
+  ["Hip", "upperHip"],
   ["Side Fitting Seam", "sideFittingSeem"],
   ["Sleeve Length", "sleeveLength"],
   ["Arm Hole", "armHole"],
@@ -82,13 +82,13 @@ function MeasurementSection({
   }
 
   return (
-    <div className="rounded-lg  bg-[#fbfaf7] p-4">
+    <div className="print-plain-card rounded-lg p-4">
       <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">{title}</h3>
       <div className="mt-3 grid gap-2">
         {rows.map(([label, value]) => (
           <div
             key={label}
-            className="flex items-center justify-between gap-3 rounded-md bg-white px-3 py-2 text-sm"
+            className="flex items-center justify-between gap-3 rounded-md text-sm"
           >
             <span className="font-semibold text-slate-500">{label}</span>
             <span className="font-bold text-slate-950">
@@ -238,25 +238,32 @@ function DesignImageSection({
   imageHeight?: string;
   imageWidth?: string;
 }) {
-  const image = design ? images[design] : undefined;
+  const selectedDesigns = design
+    .split(",")
+    .map((item) => item.trim())
+    .filter((item) => item && images[item]);
 
-  if (!image) {
+  if (selectedDesigns.length === 0) {
     return null;
   }
 
   return (
-    <div className="rounded-lg ">
+    <div className="min-w-0 rounded-lg">
       {/* <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">{title}</h3> */}
-      <div className="flex flex-col items-center gap-1.5">
-        <div className={`${imageHeight} ${imageWidth}`}>
-          <Image
-            src={image}
-            alt={`${design} ${title}`}
-            width={280}
-            height={200}
-            unoptimized
-            className="h-full w-full object-contain object-top"
-          />
+      <div className="flex min-w-0 flex-col items-center gap-1.5">
+        <div className={`flex min-w-0 flex-wrap items-center justify-center gap-2 ${imageWidth}`}>
+          {selectedDesigns.map((designName) => (
+            <div key={designName} className={`min-w-0 w-full max-w-full ${imageHeight}`}>
+              <Image
+                src={images[designName]}
+                alt={`${designName} ${title}`}
+                width={280}
+                height={200}
+                unoptimized
+                className="h-full w-full object-contain object-top"
+              />
+            </div>
+          ))}
         </div>
         {measurementValue ? (
           <div className="text-center leading-none">
@@ -290,18 +297,6 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
       })
       .catch(() => setLoadError("Unable to load the print sheet."));
   }, [customerId]);
-
-  useEffect(() => {
-    if (!customer) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      window.print();
-    }, 450);
-
-    return () => window.clearTimeout(timer);
-  }, [customer]);
 
   return (
     <main className="min-h-screen bg-[#f7f4ee] px-5 py-6 sm:px-8 lg:px-12">
@@ -340,24 +335,24 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
 
         {customer ? (
           <section className="a4-print-area rounded-lg  bg-white shadow-sm">
-            <div className="rounded-t-lg bg-[#122b2a] p-3 text-white">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="print-plain-header rounded-t-lg bg-[#122b2a] p-3 text-white">
+              <div className="flex flex-row items-center justify-between gap-3">
                 <div className="flex flex-row items-center gap-2">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white p-1">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white p-1">
                     <Image
                       src="/brand/aans-fabric-logo-icon.png"
                       alt="Aans Fabrics & Tailors Ltd logo"
-                      width={32}
-                      height={32}
+                      width={44}
+                      height={44}
                       className="h-full w-full object-contain"
                     />
                   </div>
                   <div>
-                    <h1 className="brand-name text-base font-bold sm:text-lg">Aans Fabrics & Tailors Ltd</h1>
-                    <p className="text-[15px] font-semibold text-[#e8dfd2]">0161 509 7737, 07915 253239</p>
+                    <h1 className="brand-name whitespace-nowrap text-base font-bold sm:text-lg">Aans Fabrics & Tailors Ltd</h1>
+                    <p className="whitespace-nowrap text-[15px] font-semibold text-[#e8dfd2]">0161 509 7737, 07915 253239</p>
                   </div>
                 </div>
-                <div className="flex w-full flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg border border-white/15 bg-white/10 px-3 py-1.5 sm:w-auto">
+                <div className="flex w-56 shrink-0 flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg border border-white/15 bg-white/10 px-3 py-1.5">
                   <DetailRow label="Customer" value={customer.customerName || "-"} />
                   <DetailRow label="Phone" value={customer.phoneNumber || "-"} />
                   <DetailRow label="Order ID" value={customer.customerIdNumber || "-"} />
@@ -365,153 +360,157 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 </div>
               </div>
             </div>
-            <div className="grid gap-4 p-6 sm:grid-cols-2">
-              <MeasurementSection
-                title={customer.upperGarmentPart || "Upper Body Measurements"}
-                fields={upperBodyFields}
-                customer={customer}
-              />
-              <MeasurementSection
-                title={customer.lowerGarmentPart || "Lower Body Measurements"}
-                fields={lowerBodyFields}
-                customer={customer}
-              />
-            </div>
-            <div className="grid gap-4 px-6 pb-6 sm:grid-cols-4">
-              <DesignImageSection
-                title="Waistcoat Design"
-                design={customer.waistcoat}
-                images={waistcoatDesignImages}
-                measurementValue={(customer.waistcoatValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Ladies Flair Design"
-                design={customer.ladiesFlair}
-                images={ladiesFlairDesignImages}
-                measurementValue={(customer.ladiesFlairValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Neck Design"
-                design={customer.collarDesign || customer.neckDesign}
-                images={neckDesignImages}
-                measurementValue={(customer.neckDesignValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Sleeve Design"
-                design={customer.sleeveStyle}
-                images={sleeveStyleDesignImages}
-                measurementValue={(customer.sleeveStyleValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Cuff Design"
-                design={customer.wristCuffStyle}
-                images={cuffDesignImages}
-                measurementValue={(customer.cuffDesignValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Pocket Flaps Design"
-                design={customer.pocketFlaps}
-                images={pocketFlapsDesignImages}
-                measurementValue={(customer.pocketFlapsValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Shoulder Design"
-                design={customer.shoulderTera}
-                images={shoulderTeraDesignImages}
-                measurementValue={(customer.shoulderTeraValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Shoulder Strap Design"
-                design={customer.shoulderStrapDetail}
-                images={shoulderStrapDesignImages}
-                measurementValue={(customer.shoulderStrapValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Ghaira / Bottom Design"
-                design={customer.ghairaBottomDetail}
-                images={ghairaBottomDesignImages}
-                measurementValue={(customer.ghairaBottomValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Zip"
-                design={customer.zipDetail}
-                images={zipDesignImages}
-                measurementValue={(customer.zipValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-              <DesignImageSection
-                title="Ankle / Pancha Design"
-                design={customer.anklePancha}
-                images={anklePanchaDesignImages}
-                measurementValue={(customer.anklePanchaValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-              />
-            </div>
+            <div className="flex flex-row gap-4 p-6">
+              <div className="flex w-64 shrink-0 flex-col gap-4 border-r border-[#e1d6c4] pr-4">
+                <MeasurementSection
+                  title={customer.upperGarmentPart || "Upper Body Measurements"}
+                  fields={upperBodyFields}
+                  customer={customer}
+                />
+                <MeasurementSection
+                  title={customer.lowerGarmentPart || "Lower Body Measurements"}
+                  fields={lowerBodyFields}
+                  customer={customer}
+                />
+              </div>
+              <div className="min-w-0 flex-1 space-y-4">
+                <div className="grid min-w-0 grid-cols-4 gap-4">
+                  <DesignImageSection
+                    title="Waistcoat Design"
+                    design={customer.waistcoat}
+                    images={waistcoatDesignImages}
+                    measurementValue={(customer.waistcoatValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Ladies Flair Design"
+                    design={customer.ladiesFlair}
+                    images={ladiesFlairDesignImages}
+                    measurementValue={(customer.ladiesFlairValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Neck Design"
+                    design={customer.collarDesign || customer.neckDesign}
+                    images={neckDesignImages}
+                    measurementValue={(customer.neckDesignValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Sleeve Design"
+                    design={customer.sleeveStyle}
+                    images={sleeveStyleDesignImages}
+                    measurementValue={(customer.sleeveStyleValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Cuff Design"
+                    design={customer.wristCuffStyle}
+                    images={cuffDesignImages}
+                    measurementValue={(customer.cuffDesignValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Pocket Flaps Design"
+                    design={customer.pocketFlaps}
+                    images={pocketFlapsDesignImages}
+                    measurementValue={(customer.pocketFlapsValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Shoulder Design"
+                    design={customer.shoulderTera}
+                    images={shoulderTeraDesignImages}
+                    measurementValue={(customer.shoulderTeraValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Shoulder Strap Design"
+                    design={customer.shoulderStrapDetail}
+                    images={shoulderStrapDesignImages}
+                    measurementValue={(customer.shoulderStrapValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Ghaira / Bottom Design"
+                    design={customer.ghairaBottomDetail}
+                    images={ghairaBottomDesignImages}
+                    measurementValue={(customer.ghairaBottomValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Zip"
+                    design={customer.zipDetail}
+                    images={zipDesignImages}
+                    measurementValue={(customer.zipValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                  <DesignImageSection
+                    title="Ankle / Pancha Design"
+                    design={customer.anklePancha}
+                    images={anklePanchaDesignImages}
+                    measurementValue={(customer.anklePanchaValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                  />
+                </div>
 
-            <div className="grid gap-4 px-6 pb-6 sm:grid-cols-6">
-              <DesignImageSection
-                title="Pocket Design"
-                design={customer.pocketStyle}
-                images={pocketDesignImages}
-                measurementValue={(customer.pocketStyleValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-                imageHeight="h-44"
-                imageWidth="w-full"
-              />
-              <DesignImageSection
-                title="Front Strip Design"
-                design={customer.frontStrip}
-                images={frontStripDesignImages}
-                measurementValue={(customer.frontStripValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-                imageHeight="h-44"
-                imageWidth="w-full"
-              />
-              <DesignImageSection
-                title="Front/Back Mens Design"
-                design={customer.frontBackMens}
-                images={frontBackMensDesignImages}
-                measurementValue={(customer.frontBackMensValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-                imageHeight="h-44"
-                imageWidth="w-full"
-              />
-              <DesignImageSection
-                title="Front/Back Ladies Design"
-                design={customer.frontBackLadies}
-                images={frontBackLadiesDesignImages}
-                measurementValue={(customer.frontBackLadiesValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-                imageHeight="h-44"
-                imageWidth="w-full"
-              />
-              <DesignImageSection
-                title="Shalwar Design"
-                design={customer.shalwarStyle}
-                images={shalwarStyleDesignImages}
-                measurementValue={(customer.shalwarStyleValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-                imageHeight="h-44"
-                imageWidth="w-full"
-              />
-              <DesignImageSection
-                title="Pant / Trouser Design"
-                design={customer.pantTrouserStyle}
-                images={pantTrouserDesignImages}
-                measurementValue={(customer.pantTrouserStyleValue || "").trim()}
-                unit={customer.measurementUnit || "inch"}
-                imageHeight="h-44"
-                imageWidth="w-full"
-              />
+                <div className="grid min-w-0 grid-cols-6 gap-4">
+                  <DesignImageSection
+                    title="Pocket Design"
+                    design={customer.pocketStyle}
+                    images={pocketDesignImages}
+                    measurementValue={(customer.pocketStyleValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                    imageHeight="h-44"
+                    imageWidth="w-full"
+                  />
+                  <DesignImageSection
+                    title="Front Strip Design"
+                    design={customer.frontStrip}
+                    images={frontStripDesignImages}
+                    measurementValue={(customer.frontStripValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                    imageHeight="h-44"
+                    imageWidth="w-full"
+                  />
+                  <DesignImageSection
+                    title="Front/Back Mens Design"
+                    design={customer.frontBackMens}
+                    images={frontBackMensDesignImages}
+                    measurementValue={(customer.frontBackMensValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                    imageHeight="h-44"
+                    imageWidth="w-full"
+                  />
+                  <DesignImageSection
+                    title="Front/Back Ladies Design"
+                    design={customer.frontBackLadies}
+                    images={frontBackLadiesDesignImages}
+                    measurementValue={(customer.frontBackLadiesValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                    imageHeight="h-44"
+                    imageWidth="w-full"
+                  />
+                  <DesignImageSection
+                    title="Shalwar Design"
+                    design={customer.shalwarStyle}
+                    images={shalwarStyleDesignImages}
+                    measurementValue={(customer.shalwarStyleValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                    imageHeight="h-44"
+                    imageWidth="w-full"
+                  />
+                  <DesignImageSection
+                    title="Pant / Trouser Design"
+                    design={customer.pantTrouserStyle}
+                    images={pantTrouserDesignImages}
+                    measurementValue={(customer.pantTrouserStyleValue || "").trim()}
+                    unit={customer.measurementUnit || "inch"}
+                    imageHeight="h-44"
+                    imageWidth="w-full"
+                  />
+                </div>
+              </div>
             </div>
           </section>
         ) : null}

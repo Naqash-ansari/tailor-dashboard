@@ -68,13 +68,21 @@ body {
     margin: 7mm;
   }
 
+  @page label {
+    size: A6 portrait;
+    margin: 5mm;
+  }
+
   html,
   body {
     background: #ffffff !important;
-    height: 283mm !important;
     margin: 0 !important;
-    overflow: hidden !important;
     width: 196mm !important;
+  }
+
+  body:has(.label-print-area) {
+    height: 138mm !important;
+    width: 95mm !important;
   }
 
   body > main,
@@ -102,15 +110,22 @@ body {
   .a4-print-area,
   .a4-print-area *,
   .invoice-print-area,
-  .invoice-print-area * {
+  .invoice-print-area *,
+  .label-print-area,
+  .label-print-area * {
     visibility: visible !important;
   }
 
-  main,
-  section,
-  div {
-    break-after: avoid !important;
-    page-break-after: avoid !important;
+  .label-print-area {
+    page: label;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    left: 0 !important;
+    max-width: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    width: 95mm !important;
   }
 
   .print-hidden,
@@ -120,20 +135,8 @@ body {
   }
 
   .a4-print-area {
-    break-after: avoid !important;
-    break-before: avoid !important;
-    break-inside: avoid !important;
-    page-break-after: avoid !important;
-    page-break-before: avoid !important;
-    page-break-inside: avoid !important;
-    position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
-    max-height: 270mm !important;
-    overflow: hidden !important;
-    transform: scale(0.92) !important;
-    transform-origin: top left !important;
-    width: 213mm !important;
+    position: static !important;
+    width: 196mm !important;
     border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
@@ -294,5 +297,32 @@ body {
   .invoice-print-area td {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+  }
+
+  .print-plain-header {
+    background: #ffffff !important;
+  }
+
+  .print-plain-header,
+  .print-plain-header * {
+    color: #111827 !important;
+    border-color: #d1d5db !important;
+  }
+
+  .print-plain-header img {
+    filter: none !important;
+  }
+
+  .print-plain-card {
+    background: #ffffff !important;
+    border: none !important;
+    border-bottom: 1px solid #d1d5db !important;
+    border-radius: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .a4-print-area .h-44 {
+    height: 28mm !important;
   }
 }

@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { fetchCustomer } from "@/lib/customerApi";
 import type { TailorCustomer } from "@/types/customer";
 
 function parseAmount(value: string) {
-  return Number(value.replace(/[^0-9.]/g, "")) || 0;
+  return Number((value || "").replace(/[^0-9.]/g, "")) || 0;
 }
 
 function formatAmount(value: number) {
-  return new Intl.NumberFormat("en-PK", {
-    maximumFractionDigits: 0
+  return new Intl.NumberFormat("en-GB", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   }).format(value);
 }
 
@@ -19,15 +21,13 @@ function invoiceNumber(customer: TailorCustomer) {
   return `INV-${customer.createdAt.slice(0, 4)}-${customer.id.slice(0, 8).toUpperCase()}`;
 }
 
-function DetailRow({ label, value }: { label: string; value: string }) {
-  if (!value.trim()) {
-    return null;
-  }
-
+function InvoiceFieldLine({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-5 border-b border-slate-100 py-2 text-sm">
-      <span className="font-semibold text-slate-500">{label}</span>
-      <span className="max-w-[65%] text-right font-bold text-slate-950">{value}</span>
+    <div className="flex items-baseline gap-2 text-sm">
+      <span className="shrink-0 font-bold uppercase text-slate-950">{label}:</span>
+      <span className="min-w-0 flex-1 border-b border-dotted border-slate-400 pb-0.5 font-semibold text-slate-800">
+        {value || " "}
+      </span>
     </div>
   );
 }
@@ -49,23 +49,12 @@ export function CustomerInvoicePage({ customerId }: { customerId: string }) {
       .catch(() => setLoadError("Unable to load the invoice."));
   }, [customerId]);
 
-  useEffect(() => {
-    if (!customer) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      window.print();
-    }, 450);
-
-    return () => window.clearTimeout(timer);
-  }, [customer]);
-
   const totals = useMemo(() => {
     if (!customer) {
       return {
         price: 0,
         advance: 0,
+        discount: 0,
         remaining: 0
       };
     }
@@ -73,6 +62,7 @@ export function CustomerInvoicePage({ customerId }: { customerId: string }) {
     return {
       price: parseAmount(customer.stitchingPrice),
       advance: parseAmount(customer.advancePayment),
+      discount: parseAmount(customer.discount),
       remaining: parseAmount(customer.remainingPayment)
     };
   }, [customer]);
@@ -112,81 +102,72 @@ export function CustomerInvoicePage({ customerId }: { customerId: string }) {
 
         {customer ? (
           <>
-            <header className="flex flex-col gap-6 border-b border-[#e1d6c4] pb-5 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="brand-name text-sm font-black uppercase tracking-wide text-[#0d6b5f]">
-                  Aans Fabrics & Tailors Ltd
-                </p>
-                <h2 className="mt-2 text-3xl font-black text-slate-950">Invoice</h2>
-                <p className="mt-2 text-sm font-semibold text-slate-500">
-                  Simple Suit Cutting Sheet
-                </p>
+            <header className="flex flex-col gap-5 border-b-2 border-slate-950 pb-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white p-1.5">
+                  <Image
+                    src="/brand/aans-fabric-logo-icon.png"
+                    alt="Aans Fabrics & Tailors Ltd logo"
+                    width={64}
+                    height={64}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+                <div>
+                  <p className="brand-name text-2xl font-black leading-tight text-slate-950">
+                    Aans Fabrics &amp; Tailors Ltd
+                  </p>
+                  <p className="mt-1 max-w-[220px] text-[10px] font-semibold uppercase leading-snug tracking-wide text-slate-500">
+                    Specialists in Ladies &amp; Gents Tailoring &amp; Alteration
+                  </p>
+                </div>
               </div>
-              <div className="rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-4 text-sm">
-                <DetailRow label="Invoice" value={invoiceNumber(customer)} />
-                <DetailRow label="Order date" value={customer.orderDate || "-"} />
-                <DetailRow label="Delivery" value={customer.deliveryDate || "-"} />
-                <DetailRow label="Status" value={customer.orderStatus} />
+
+              <div className="w-full sm:w-72">
+                <p className="text-right text-lg font-black uppercase text-slate-950">
+                  Invoice No.{" "}
+                  <span className="text-[#0d6b5f]">{invoiceNumber(customer)}</span>
+                </p>
+                <div className="mt-3 space-y-1.5">
+                  <InvoiceFieldLine label="ID" value={customer.customerIdNumber} />
+                  <InvoiceFieldLine label="Name" value={customer.customerName} />
+                  <InvoiceFieldLine label="Tel" value={customer.phoneNumber} />
+                  <div className="flex gap-3">
+                    <InvoiceFieldLine label="Date" value={customer.orderDate} />
+                    <InvoiceFieldLine label="Due" value={customer.deliveryDate} />
+                  </div>
+                </div>
               </div>
             </header>
 
-            <div className="mt-6 grid gap-5 md:grid-cols-2">
-              <section className="rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-4">
-                <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">
-                  Customer
-                </h3>
-                <div className="mt-3">
-                  <DetailRow label="Name" value={customer.customerName || "-"} />
-                  <DetailRow label="Phone" value={customer.phoneNumber || "-"} />
-                  <DetailRow label="Address" value={customer.address} />
-                </div>
-              </section>
-
-              <section className="rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-4">
-                <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">
-                  Order
-                </h3>
-                <div className="mt-3">
-                  <DetailRow label="Category" value={customer.customerCategory} />
-                  <DetailRow label="Outfit" value={customer.outfitType} />
-                  <DetailRow label="Fabric" value={customer.fabricType} />
-                  <DetailRow label="Suit design" value={customer.suitDesign} />
-                </div>
-              </section>
+            <div className="mt-3 flex flex-col items-center justify-between gap-1 border-b border-slate-950 pb-3 text-center text-xs font-semibold text-slate-700 sm:flex-row">
+              <span>Tel: 0161 509 7737, 07915 253239</span>
+              <span>aansfabricstailorsltd.com</span>
             </div>
 
-            <section className="mt-6 overflow-hidden rounded-lg border border-[#e1d6c4]">
+            <section className="mt-5 overflow-hidden rounded border border-slate-950">
               <table className="min-w-full text-left text-sm">
-                <thead className="bg-[#102f2d] text-xs uppercase tracking-wide text-white">
+                <thead className="bg-slate-950 text-xs uppercase tracking-wide text-white">
                   <tr>
-                    <th className="px-4 py-3 font-bold">Item</th>
-                    <th className="px-4 py-3 font-bold">Description</th>
-                    <th className="px-4 py-3 text-right font-bold">Amount</th>
+                    <th className="px-3 py-2 font-bold">Description</th>
+                    <th className="px-3 py-2 text-center font-bold">Qty</th>
+                    <th className="px-3 py-2 text-right font-bold">Rate</th>
+                    <th className="px-3 py-2 text-right font-bold">Amount</th>
+                    <th className="px-3 py-2 text-right font-bold">Discount</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 bg-white">
+                <tbody className="divide-y divide-slate-200 bg-white">
                   <tr>
-                    <td className="px-4 py-4 font-bold text-slate-950">Stitching</td>
-                    <td className="px-4 py-4 text-slate-600">
+                    <td className="px-3 py-4 font-semibold text-slate-950">
                       {customer.outfitType || "Tailor order"}
                     </td>
-                    <td className="px-4 py-4 text-right font-black">
-                      Rs {formatAmount(totals.price)}
+                    <td className="px-3 py-4 text-center">1</td>
+                    <td className="px-3 py-4 text-right">£{formatAmount(totals.price)}</td>
+                    <td className="px-3 py-4 text-right font-bold">
+                      £{formatAmount(totals.price)}
                     </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-4 font-bold text-slate-950">Advance</td>
-                    <td className="px-4 py-4 text-slate-600">Paid by customer</td>
-                    <td className="px-4 py-4 text-right font-black">
-                      Rs {formatAmount(totals.advance)}
-                    </td>
-                  </tr>
-                  <tr className="bg-[#fbfaf7]">
-                    <td className="px-4 py-4 font-black text-slate-950" colSpan={2}>
-                      Remaining balance
-                    </td>
-                    <td className="px-4 py-4 text-right text-lg font-black text-[#0d6b5f]">
-                      Rs {formatAmount(totals.remaining)}
+                    <td className="px-3 py-4 text-right text-red-600">
+                      {totals.discount > 0 ? `-£${formatAmount(totals.discount)}` : "-"}
                     </td>
                   </tr>
                 </tbody>
@@ -194,19 +175,36 @@ export function CustomerInvoicePage({ customerId }: { customerId: string }) {
             </section>
 
             {customer.notes ? (
-              <section className="mt-6 rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-4">
-                <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">
-                  Notes
-                </h3>
-                <p className="mt-2 text-sm font-medium text-slate-700">{customer.notes}</p>
-              </section>
+              <p className="mt-3 text-sm text-slate-600">
+                <span className="font-bold text-slate-950">Notes: </span>
+                {customer.notes}
+              </p>
             ) : null}
 
-            <footer className="mt-8 flex flex-col gap-6 border-t border-[#e1d6c4] pt-5 text-sm text-slate-600 sm:flex-row sm:items-end sm:justify-between">
-              <p>Thank you for your order.</p>
-              <div className="w-52 border-t border-slate-400 pt-2 text-center font-bold text-slate-950">
-                Authorized signature
+            <div className="ml-auto mt-6 w-full max-w-xs space-y-1.5 text-sm">
+              <div className="flex justify-between text-slate-600">
+                <span>Subtotal</span>
+                <span>£{formatAmount(totals.price)}</span>
               </div>
+              {totals.discount > 0 ? (
+                <div className="flex justify-between text-slate-600">
+                  <span>Discount</span>
+                  <span>-£{formatAmount(totals.discount)}</span>
+                </div>
+              ) : null}
+              <div className="flex justify-between text-slate-600">
+                <span>Advance paid</span>
+                <span>-£{formatAmount(totals.advance)}</span>
+              </div>
+              <div className="flex items-center justify-between border-t-2 border-slate-950 pt-2 text-lg font-black uppercase text-slate-950">
+                <span>Total: £</span>
+                <span>{formatAmount(totals.remaining)}</span>
+              </div>
+            </div>
+
+            <footer className="mt-8 border-t border-dashed border-slate-400 pt-4 text-center text-xs text-slate-500">
+              If you have any questions concerning this invoice, use the following contact
+              information: 0161 509 7737, 07915 253239
             </footer>
           </>
         ) : null}

@@ -276,9 +276,9 @@ export function CustomersTable() {
                   <div>Sleeve: {order.sleeveLength || "-"} {order.measurementUnit ?? "inch"}</div>
                 </td>
                 <td className="px-4 py-4 text-slate-700">
-                  <div>Price: {order.stitchingPrice || "0"}</div>
-                  <div>Advance: {order.advancePayment || "0"}</div>
-                  <div>Remaining: {order.remainingPayment || "0"}</div>
+                  <div>Price: £{order.stitchingPrice || "0"}</div>
+                  <div>Advance: £{order.advancePayment || "0"}</div>
+                  <div>Remaining: £{order.remainingPayment || "0"}</div>
                   <div
                     className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-bold ${getCompletionLabel(order).className}`}
                   >
@@ -304,13 +304,19 @@ export function CustomersTable() {
                       href={`/customers/${order.id}/print`}
                       className="rounded-md border border-[#0d6b5f] px-3 py-1.5 text-xs font-semibold text-[#0d6b5f] hover:bg-[#e8f4f0]"
                     >
-                      Print
+                      Preview
                     </Link>
                     <Link
                       href={`/customers/${order.id}/invoice`}
                       className="rounded-md border border-[#1f3a5f] px-3 py-1.5 text-xs font-semibold text-[#1f3a5f] hover:bg-blue-50"
                     >
                       Invoice
+                    </Link>
+                    <Link
+                      href={`/customers/${order.id}/label`}
+                      className="rounded-md border border-[#7a5415] px-3 py-1.5 text-xs font-semibold text-[#7a5415] hover:bg-[#fff8e7]"
+                    >
+                      Label
                     </Link>
                     <button
                       type="button"

@@ -3,6 +3,7 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { fetchCustomer, fetchCustomers, saveCustomerRecord } from "@/lib/customerApi";
 import { isValidUkPhone, sanitizePhoneDigits } from "@/lib/ukPhone";
 import { emptyCustomerForm, type CustomerFormValues, type TailorCustomer } from "@/types/customer";
@@ -35,6 +36,7 @@ type FormState = {
     upperBack: string;
     crossBack: string;
     waist: string;
+    upperHip: string;
     hip: string;
     sideFittingSeam: string;
     sleeveLength: string;
@@ -104,6 +106,7 @@ type FormState = {
     designReference: string;
     totalPayment: string;
     advancePayment: string;
+    discount: string;
     remainingPayment: string;
     orderStatus: string;
 };
@@ -136,6 +139,7 @@ const initialState: FormState = {
     upperBack: "",
     crossBack: "",
     waist: "",
+    upperHip: "",
     hip: "",
     sideFittingSeam: "",
     sleeveLength: "",
@@ -205,6 +209,7 @@ const initialState: FormState = {
     designReference: "",
     totalPayment: "",
     advancePayment: "",
+    discount: "",
     remainingPayment: "",
     orderStatus: "Pending"
 };
@@ -285,6 +290,7 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
         upperBack: customer.upperBack,
         crossBack: customer.crossBack,
         waist: customer.waistWidth || customer.shalwarWaist,
+        upperHip: customer.upperHip,
         hip: customer.hip,
         sideFittingSeam: customer.sideFittingSeem,
         sleeveLength: customer.sleeveLength,
@@ -354,6 +360,7 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
         designReference: customer.suitDesign || customer.fabricType,
         totalPayment: customer.stitchingPrice,
         advancePayment: customer.advancePayment || "0",
+        discount: customer.discount || "0",
         remainingPayment: customer.remainingPayment,
         orderStatus: customer.orderStatus
     };
@@ -757,7 +764,8 @@ function ImageChoiceField({
     value,
     onChange,
     options,
-    extraField
+    extraField,
+    multiSelect = false
 }: {
     label: string;
     value: string;
@@ -768,17 +776,40 @@ function ImageChoiceField({
         value: string;
         onChange: (value: string) => void;
     };
+    multiSelect?: boolean;
 }) {
     const detailsRef = useRef<HTMLDetailsElement>(null);
     const selected = options.find((option) => option.value === value);
+    const selectedValues = multiSelect
+        ? value.split(",").map((item) => item.trim()).filter(Boolean)
+        : [];
+
+    const isChecked = (optionValue: string) =>
+        multiSelect ? selectedValues.includes(optionValue) : value === optionValue;
 
     const handleSelect = (optionValue: string) => {
+        if (multiSelect) {
+            const nextValues = selectedValues.includes(optionValue)
+                ? selectedValues.filter((item) => item !== optionValue)
+                : [...selectedValues, optionValue];
+            onChange(nextValues.join(", "));
+            return;
+        }
+
         onChange(optionValue);
 
         if (!extraField && detailsRef.current) {
             detailsRef.current.open = false;
         }
     };
+
+    const summaryLabel = multiSelect
+        ? selectedValues.length > 0
+            ? selectedValues.join(", ")
+            : `Select ${label.toLowerCase()}`
+        : selected
+            ? selected.value
+            : `Select ${label.toLowerCase()}`;
 
     return (
         <div className="block">
@@ -787,24 +818,29 @@ function ImageChoiceField({
                 <summary
                     className={`${inputClass} flex cursor-pointer list-none items-center justify-between [&::-webkit-details-marker]:hidden`}
                 >
-                    <span>{selected ? selected.value : `Select ${label.toLowerCase()}`}</span>
+                    <span className="truncate">{summaryLabel}</span>
                     <span className="text-slate-400 transition group-open:rotate-180">▾</span>
                 </summary>
                 <div className="absolute z-10 mt-2 w-full rounded-md border border-[#d8ccb9] bg-white p-3 shadow-lg">
+                    {multiSelect ? (
+                        <p className="mb-2 text-xs font-medium text-slate-500">
+                            Multiple selection allowed
+                        </p>
+                    ) : null}
                     <div className="grid grid-cols-3 gap-3">
                         {options.map((option) => (
                             <label
                                 key={option.value}
-                                className={`flex cursor-pointer flex-col items-center gap-2 rounded-md border p-2 text-center transition ${value === option.value
+                                className={`flex cursor-pointer flex-col items-center gap-2 rounded-md border p-2 text-center transition ${isChecked(option.value)
                                         ? "border-[#0d6b5f] bg-[#0d6b5f]/5"
                                         : "border-[#e1d6c4] hover:bg-[#fbfaf7]"
                                     }`}
                             >
                                 <input
-                                    type="radio"
+                                    type={multiSelect ? "checkbox" : "radio"}
                                     name={`${label}-choice`}
                                     value={option.value}
-                                    checked={value === option.value}
+                                    checked={isChecked(option.value)}
                                     onChange={() => handleSelect(option.value)}
                                     className="h-4 w-4 accent-[#0d6b5f]"
                                 />
@@ -924,7 +960,7 @@ export function CustomerOrderForm() {
     ) => {
         const { name, value } = event.target;
         const sanitizedValue =
-            name === "totalPayment" || name === "advancePayment" || name === "remainingPayment"
+            name === "totalPayment" || name === "advancePayment" || name === "discount" || name === "remainingPayment"
                 ? sanitizeDecimalInput(value)
                 : name === "number"
                     ? sanitizePhoneDigits(value)
@@ -937,10 +973,11 @@ export function CustomerOrderForm() {
         setForm((current) => {
             const nextValues = { ...current, [name]: sanitizedValue };
 
-            if (name === "totalPayment" || name === "advancePayment") {
+            if (name === "totalPayment" || name === "advancePayment" || name === "discount") {
                 const total = Number.parseFloat(nextValues.totalPayment || "0");
                 const advance = Number.parseFloat(nextValues.advancePayment || "0");
-                const remaining = Math.max(total - advance, 0);
+                const discount = Number.parseFloat(nextValues.discount || "0");
+                const remaining = Math.max(total - advance - discount, 0);
                 return {
                     ...nextValues,
                     remainingPayment: remaining.toFixed(2)
@@ -992,6 +1029,7 @@ export function CustomerOrderForm() {
         upperBack: form.upperBack,
         crossBack: form.crossBack,
         waistWidth: form.waist,
+        upperHip: form.upperHip,
         hip: form.hip,
         sideFittingSeem: form.sideFittingSeam,
         sleeveLength: form.sleeveLength,
@@ -1066,6 +1104,7 @@ export function CustomerOrderForm() {
         suitDesign: form.designReference,
         stitchingPrice: form.totalPayment,
         advancePayment: form.advancePayment,
+        discount: form.discount,
         remainingPayment: form.remainingPayment,
         orderStatus: (form.orderStatus as CustomerFormValues["orderStatus"]) || "Pending"
     });
@@ -1094,6 +1133,14 @@ export function CustomerOrderForm() {
 
     return (
         <main className="min-h-screen bg-[#f7f4ee] px-4 py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto mb-4 max-w-6xl">
+                <Link
+                    href="/customers"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-[#d8ccb9] bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm hover:bg-[#fbfaf7]"
+                >
+                    ← Back
+                </Link>
+            </div>
             <div className="mx-auto max-w-6xl rounded-2xl border border-[#e1d6c4] bg-[#fcfbf8] p-4 shadow-sm sm:p-6">
                 {/* <header className="mb-6 rounded-xl bg-[#122b2a] p-6 text-white">
                     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f3d68c]">
@@ -1137,7 +1184,7 @@ export function CustomerOrderForm() {
                                 ]}
                             />
                             {form.customerCategory ? (
-                                <SelectField
+                                <ComboField
                                     label="Garment Type"
                                     name="measurementType"
                                     value={form.measurementType}
@@ -1190,7 +1237,7 @@ export function CustomerOrderForm() {
                             <Field label="Upper Back" name="upperBack" value={form.upperBack} onChange={handleChange} />
                             <Field label="Cross Back" name="crossBack" value={form.crossBack} onChange={handleChange} />
                             <Field label="Waist" name="waist" value={form.waist} onChange={handleChange} />
-                            <Field label="Hip" name="hip" value={form.hip} onChange={handleChange} />
+                            <Field label="Hip" name="upperHip" value={form.upperHip} onChange={handleChange} />
                             <Field label="Side Fitting Seam" name="sideFittingSeam" value={form.sideFittingSeam} onChange={handleChange} />
                             <Field label="Sleeve Length" name="sleeveLength" value={form.sleeveLength} onChange={handleChange} />
                             <Field label="Arm Hole" name="armHole" value={form.armHole} onChange={handleChange} />
@@ -1369,6 +1416,7 @@ export function CustomerOrderForm() {
                                 value={form.pocket}
                                 onChange={(value) => setForm((current) => ({ ...current, pocket: value }))}
                                 options={pocketOptions}
+                                multiSelect
                                 extraField={{
                                     label: "Pocket Value",
                                     value: form.pocketValue,
@@ -1488,7 +1536,7 @@ export function CustomerOrderForm() {
                                 Professional billing summary for each order.
                             </p> */}
                         </div>
-                        <div className="grid gap-4 md:grid-cols-3">
+                        <div className="grid gap-4 md:grid-cols-4">
                             <Field
                                 label="Total Payment (£)"
                                 name="totalPayment"
@@ -1506,6 +1554,14 @@ export function CustomerOrderForm() {
                                 pattern="[0-9]*[.]?[0-9]*"
                             />
                             <Field
+                                label="Discount (£)"
+                                name="discount"
+                                value={form.discount}
+                                onChange={handleChange}
+                                inputMode="decimal"
+                                pattern="[0-9]*[.]?[0-9]*"
+                            />
+                            <Field
                                 label="Remaining Payment (£)"
                                 name="remainingPayment"
                                 value={form.remainingPayment}
@@ -1514,7 +1570,7 @@ export function CustomerOrderForm() {
                                 inputMode="decimal"
                                 pattern="[0-9]*[.]?[0-9]*"
                             />
-                            <div className="md:col-span-3">
+                            <div>
                                 <SelectField
                                     label="Order Status"
                                     name="orderStatus"

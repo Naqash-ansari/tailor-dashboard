@@ -32,6 +32,7 @@ export type TailorCustomer = {
   upperBack: string;
   crossBack: string;
   waistWidth: string;
+  upperHip: string;
   hip: string;
   sideFittingSeem: string;
   sleeveLength: string;
@@ -112,6 +113,7 @@ export type TailorCustomer = {
   suitDesign: string;
   stitchingPrice: string;
   advancePayment: string;
+  discount: string;
   remainingPayment: string;
   orderStatus: OrderStatus;
 };
@@ -146,6 +148,7 @@ export const emptyCustomerForm: CustomerFormValues = {
   upperBack: "",
   crossBack: "",
   waistWidth: "",
+  upperHip: "",
   hip: "",
   sideFittingSeem: "",
   sleeveLength: "",
@@ -226,6 +229,7 @@ export const emptyCustomerForm: CustomerFormValues = {
   suitDesign: "",
   stitchingPrice: "",
   advancePayment: "0",
+  discount: "0",
   remainingPayment: "",
   orderStatus: "Pending"
 };
