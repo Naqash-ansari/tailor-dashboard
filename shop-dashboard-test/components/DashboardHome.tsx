@@ -8,6 +8,7 @@ import {
   migrateLegacyLocalStorageCustomers
 } from "@/lib/customerApi";
 import { useDeliveryNotice } from "@/lib/deliveryReminders";
+import { formatDisplayDate } from "@/lib/formatDate";
 import { DeliveryReminderToast } from "@/components/DeliveryReminderToast";
 import { DeliveryWarningChart } from "@/components/DeliveryWarningChart";
 import { LoadingState } from "@/components/LoadingState";
@@ -492,7 +493,7 @@ export function DashboardHome() {
                           : "mt-1 text-sm font-semibold text-[#a13d2c]"
                       }
                     >
-                      {reminder.label} · {order.deliveryDate}
+                      {reminder.label} · {formatDisplayDate(order.deliveryDate)}
                     </p>
                   </li>
                 );

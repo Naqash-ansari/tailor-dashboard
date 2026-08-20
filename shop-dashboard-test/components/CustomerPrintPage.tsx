@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { fetchCustomer } from "@/lib/customerApi";
+import { formatDisplayDate } from "@/lib/formatDate";
 import type { TailorCustomer } from "@/types/customer";
 
 function DetailRow({ label, value }: { label: string; value: string }) {
@@ -72,7 +73,6 @@ function MeasurementSection({
   fields: Array<[string, keyof TailorCustomer]>;
   customer: TailorCustomer;
 }) {
-  const unit = customer.measurementUnit || "inch";
   const rows = fields
     .map(([label, key]) => [label, String(customer[key] ?? "").trim()] as const)
     .filter(([, value]) => value.length > 0);
@@ -90,10 +90,8 @@ function MeasurementSection({
             key={label}
             className="flex items-center justify-between gap-3 rounded-md text-sm"
           >
-            <span className="font-semibold text-slate-500">{label}</span>
-            <span className="font-bold text-slate-950">
-              {value} {unit}
-            </span>
+            <span className="font-bold text-slate-700">{label}</span>
+            <span className="font-bold text-slate-950">{value}</span>
           </div>
         ))}
       </div>
@@ -337,17 +335,17 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
           <section className="a4-print-area rounded-lg  bg-white shadow-sm">
             <div className="print-plain-header rounded-t-lg bg-[#122b2a] p-3 text-white">
               <div className="flex flex-row items-center justify-between gap-3">
-                <div className="flex flex-row items-center gap-2">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white p-1">
+                <div className="flex flex-row items-center gap-3">
+                  <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white p-2">
                     <Image
                       src="/brand/aans-fabric-logo-icon.png"
                       alt="Aans Fabrics & Tailors Ltd logo"
-                      width={44}
-                      height={44}
+                      width={96}
+                      height={96}
                       className="h-full w-full object-contain"
                     />
                   </div>
-                  <div>
+                  <div className="text-center">
                     <h1 className="brand-name whitespace-nowrap text-base font-bold sm:text-lg">Aans Fabrics & Tailors Ltd</h1>
                     <p className="whitespace-nowrap text-[15px] font-semibold text-[#e8dfd2]">0161 509 7737, 07915 253239</p>
                   </div>
@@ -356,12 +354,17 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                   <DetailRow label="Customer" value={customer.customerName || "-"} />
                   <DetailRow label="Phone" value={customer.phoneNumber || "-"} />
                   <DetailRow label="Order ID" value={customer.customerIdNumber || "-"} />
-                  <DetailRow label="Delivery" value={customer.deliveryDate || "-"} />
+                  <DetailRow label="Order Date" value={customer.orderDate ? formatDisplayDate(customer.orderDate) : "-"} />
+                  <DetailRow label="Delivery" value={customer.deliveryDate ? formatDisplayDate(customer.deliveryDate) : "-"} />
                 </div>
               </div>
             </div>
+            <div className="border-b border-[#e1d6c4]" />
             <div className="flex flex-row gap-4 p-6">
               <div className="flex w-64 shrink-0 flex-col gap-4 border-r border-[#e1d6c4] pr-4">
+                <h2 className="border-b border-[#e1d6c4] pb-2 text-sm font-black uppercase tracking-wide text-[#0d6b5f]">
+                  Measurement Detail ({customer.measurementUnit || "inch"})
+                </h2>
                 <MeasurementSection
                   title={customer.upperGarmentPart || "Upper Body Measurements"}
                   fields={upperBodyFields}
@@ -374,6 +377,36 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 />
               </div>
               <div className="min-w-0 flex-1 space-y-4">
+                <h2 className="border-b border-[#e1d6c4] pb-2 text-sm font-black uppercase tracking-wide text-[#0d6b5f]">
+                  Designing &amp; Stitching Details
+                </h2>
+                {(() => {
+                  const stitchingNotes: Array<[string, string]> = [
+                    ["Fitting Style", customer.fittingStyle] as [string, string],
+                    ["Seam Style", customer.seamStyle] as [string, string],
+                    ["Side Chaak / Slit", customer.sideChaakSlit] as [string, string],
+                    ["Plates / Darts", customer.platesDarts] as [string, string],
+                    ["Button", customer.buttonDetails] as [string, string],
+                    ["Pipping", customer.piping] as [string, string],
+                    ["Dupatta / Veil", customer.dupattaVeil] as [string, string],
+                    ["Design Reference", customer.suitDesign || customer.fabricType] as [string, string]
+                  ].filter(([, value]) => Boolean(value));
+
+                  if (stitchingNotes.length === 0) {
+                    return null;
+                  }
+
+                  return (
+                    <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                      {stitchingNotes.map(([label, value]) => (
+                        <div key={label} className="flex items-center gap-1">
+                          <span className="font-bold text-slate-700">{label}:</span>
+                          <span className="font-bold text-slate-950">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
                 <div className="grid min-w-0 grid-cols-4 gap-4">
                   <DesignImageSection
                     title="Waistcoat Design"

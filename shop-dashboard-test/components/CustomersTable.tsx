@@ -9,6 +9,7 @@ import {
 } from "@/lib/customerApi";
 import { getDeliveryReminder, useDeliveryNotice } from "@/lib/deliveryReminders";
 import { toUkInternationalPhone } from "@/lib/ukPhone";
+import { formatDisplayDate } from "@/lib/formatDate";
 import type { TailorCustomer } from "@/types/customer";
 import { MeasurementPreview } from "@/components/MeasurementPreview";
 import { DeliveryReminderToast } from "@/components/DeliveryReminderToast";
@@ -36,7 +37,7 @@ function customerKey(customer: TailorCustomer) {
 }
 
 function formatDate(value: string) {
-  return value || "Not set";
+  return value ? formatDisplayDate(value) : "Not set";
 }
 
 function parseAmount(value: string) {
