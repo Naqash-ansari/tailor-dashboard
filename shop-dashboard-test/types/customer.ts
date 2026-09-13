@@ -82,6 +82,8 @@ export type TailorCustomer = {
   ladiesFlairValue: string;
   neckDesign: string;
   neckDesignValue: string;
+  neckDesignWomens: string;
+  neckDesignWomensValue: string;
   frontStrip: string;
   frontStripValue: string;
   shoulderTera: string;
@@ -198,6 +200,8 @@ export const emptyCustomerForm: CustomerFormValues = {
   ladiesFlairValue: "",
   neckDesign: "",
   neckDesignValue: "",
+  neckDesignWomens: "",
+  neckDesignWomensValue: "",
   frontStrip: "",
   frontStripValue: "",
   shoulderTera: "",

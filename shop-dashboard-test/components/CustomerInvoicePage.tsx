@@ -153,8 +153,8 @@ export function CustomerInvoicePage({ customerId }: { customerId: string }) {
 
         {customer ? (
           <>
-            <header className="flex flex-col gap-5 border-b-2 border-slate-950 pb-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex items-center gap-3">
+            <header className="flex flex-row items-start justify-between gap-5 border-b-2 border-slate-950 pb-4">
+              <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white p-2">
                   <Image
                     src="/brand/aans-fabric-logo-icon.png"
@@ -164,17 +164,21 @@ export function CustomerInvoicePage({ customerId }: { customerId: string }) {
                     className="h-full w-full object-contain"
                   />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="brand-name text-2xl font-black leading-tight text-slate-950">
                     Aans Fabrics &amp; Tailors Ltd
                   </p>
                   <p className="mt-1 max-w-[220px] text-[10px] font-semibold uppercase leading-snug tracking-wide text-slate-500">
                     Specialists in Ladies &amp; Gents Tailoring &amp; Alteration
                   </p>
+                  <p className="mt-1.5 text-[11px] font-semibold text-slate-700">
+                    Tel: 0161 509 7737, 07915 253239
+                  </p>
+                  <p className="text-[11px] font-semibold text-slate-700">aansfabricstailorsltd.com</p>
                 </div>
               </div>
 
-              <div className="w-full sm:w-72">
+              <div className="w-72 shrink-0">
                 <p className="text-right text-lg font-black uppercase text-slate-950">
                   Invoice No.{" "}
                   <span className="text-[#0d6b5f]">{invoiceNumber(customer)}</span>
@@ -182,7 +186,6 @@ export function CustomerInvoicePage({ customerId }: { customerId: string }) {
                 <div className="mt-3 space-y-1.5">
                   <InvoiceFieldLine label="ID" value={customer.customerIdNumber} />
                   <InvoiceFieldLine label="Name" value={customer.customerName} />
-                  <InvoiceFieldLine label="Tel" value={customer.phoneNumber} />
                   <div className="flex gap-3">
                     <InvoiceFieldLine label="Date" value={formatDisplayDate(customer.orderDate)} />
                     <InvoiceFieldLine label="Due" value={formatDisplayDate(customer.deliveryDate)} />
@@ -190,11 +193,6 @@ export function CustomerInvoicePage({ customerId }: { customerId: string }) {
                 </div>
               </div>
             </header>
-
-            <div className="mt-3 flex flex-col items-center justify-between gap-1 border-b border-slate-950 pb-3 text-center text-xs font-semibold text-slate-700 sm:flex-row">
-              <span>Tel: 0161 509 7737, 07915 253239</span>
-              <span>aansfabricstailorsltd.com</span>
-            </div>
 
             <section className="mt-5 overflow-hidden rounded border border-slate-950">
               <table className="min-w-full text-left text-sm">

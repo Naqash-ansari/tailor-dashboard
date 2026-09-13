@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   deleteCustomerRecord,
@@ -93,8 +94,9 @@ function WhatsAppIcon() {
 }
 
 export function CustomersTable() {
+  const searchParams = useSearchParams();
   const [customers, setCustomers] = useState<TailorCustomer[]>([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [previewCustomer, setPreviewCustomer] = useState<TailorCustomer | null>(null);
   const [customerPendingDelete, setCustomerPendingDelete] =
     useState<TailorCustomer | null>(null);

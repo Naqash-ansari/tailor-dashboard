@@ -142,11 +142,9 @@ body {
     border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    left: 0 !important;
     max-width: none !important;
     padding: 0 !important;
-    position: fixed !important;
-    top: 0 !important;
+    position: static !important;
     width: 196mm !important;
   }
 
@@ -320,5 +318,9 @@ body {
 
   .a4-print-area .h-44 {
     height: 28mm !important;
+  }
+
+  .a4-print-area .w-\[2in\] {
+    width: 1.3in !important;
   }
 }

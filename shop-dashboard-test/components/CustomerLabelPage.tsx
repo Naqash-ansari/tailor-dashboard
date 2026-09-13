@@ -61,7 +61,7 @@ export function CustomerLabelPage({ customerId }: { customerId: string }) {
             className="label-print-area flex h-[148mm] w-[105mm] origin-top-left border border-slate-950 bg-white"
             style={{ transform: "rotate(90deg) translateY(-100%)" }}
           >
-            <div className="relative flex-[2] border-r border-slate-950">
+            <div className="relative flex-1 border-r border-slate-950">
               <div className="absolute inset-0 flex -rotate-90 flex-col items-center justify-center gap-1 text-center">
                 {/* <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                   Customer Address
@@ -78,28 +78,31 @@ export function CustomerLabelPage({ customerId }: { customerId: string }) {
               </div>
             </div>
 
-            <div className="relative flex-1">
-              <div className="absolute inset-0 flex -rotate-90 flex-col items-center justify-center gap-1.5 whitespace-nowrap text-center">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white p-1.5">
-                    <Image
-                      src="/brand/aans-fabric-logo-icon.png"
-                      alt="Aans Fabrics & Tailors Ltd logo"
-                      width={64}
-                      height={64}
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                  <p className="brand-name text-left text-sm font-black leading-none text-slate-950">
+            <div className="relative w-[1.5in] shrink-0">
+              <div className="absolute inset-0 flex -rotate-90 items-center justify-center gap-3 whitespace-nowrap">
+                <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white p-1.5">
+                  <Image
+                    src="/brand/aans-fabric-logo-icon.png"
+                    alt="Aans Fabrics & Tailors Ltd logo"
+                    width={112}
+                    height={112}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+                <div className="flex flex-col items-start gap-1 text-left">
+                  <p className="brand-name text-sm font-black leading-none text-slate-950">
                     Aans Fabrics &amp; Tailors Ltd
                   </p>
+                  <p className="w-[2.6in] whitespace-normal text-[9px] font-semibold uppercase leading-tight text-slate-500">
+                    Specialists in Ladies &amp; Gents Tailoring &amp; Alteration
+                  </p>
+                  <p className="w-[2.6in] whitespace-normal text-[10px] leading-tight text-slate-500">
+                    343 Cheetham Hill Road, Manchester, M8 0SF
+                  </p>
+                  <p className="text-[10px] leading-none text-slate-500">
+                    0161 509 7737, 07915 253239
+                  </p>
                 </div>
-                <p className="w-32 whitespace-normal text-center text-[10px] leading-tight text-slate-500">
-                  343 Cheetham Hill Road, Manchester, M8 0SF
-                </p>
-                <p className="text-center text-[10px] leading-none text-slate-500">
-                  0161 509 7737, 07915 253239
-                </p>
               </div>
             </div>
           </section>

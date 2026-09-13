@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   fetchCustomers,
@@ -69,9 +70,11 @@ function getWeeklyOrderCounts(customers: TailorCustomer[]) {
 }
 
 export function DashboardHome() {
+  const router = useRouter();
   const [customers, setCustomers] = useState<TailorCustomer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [recentPageRaw, setRecentPageRaw] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const {
     notice: deliveryNotice,
     dismiss: dismissDeliveryNotice,
@@ -198,7 +201,7 @@ export function DashboardHome() {
                 </p>
               </div>
 
-              <nav className="flex flex-wrap gap-3">
+              <nav className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/customers/order"
                   className="rounded-md bg-[#d8b05b] px-5 py-2.5 text-sm font-bold text-[#122b2a] shadow-sm transition hover:bg-[#e4c171]"
@@ -211,6 +214,28 @@ export function DashboardHome() {
                 >
                   Saved customers
                 </Link>
+                <form
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    const query = searchQuery.trim();
+                    router.push(query ? `/customers?search=${encodeURIComponent(query)}` : "/customers");
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Search customers"
+                    className="w-40 rounded-md border border-white/25 bg-white/10 px-3 py-2.5 text-sm text-white placeholder-white/50 outline-none transition focus:border-white/50 sm:w-56"
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-md border border-white/25 bg-white/10 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/15"
+                  >
+                    Search
+                  </button>
+                </form>
               </nav>
             </div>
 

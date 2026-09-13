@@ -74,6 +74,8 @@ type FormState = {
     ladiesFlairValue: string;
     neckDetail: string;
     neckDesignValue: string;
+    neckWomensDetail: string;
+    neckWomensDesignValue: string;
     frontStrip: string;
     frontStripValue: string;
     shoulderTera: string;
@@ -177,6 +179,8 @@ const initialState: FormState = {
     ladiesFlairValue: "",
     neckDetail: "",
     neckDesignValue: "",
+    neckWomensDetail: "",
+    neckWomensDesignValue: "",
     frontStrip: "",
     frontStripValue: "",
     shoulderTera: "",
@@ -328,6 +332,8 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
         ladiesFlairValue: customer.ladiesFlairValue,
         neckDetail: customer.collarDesign || customer.neckDesign,
         neckDesignValue: customer.neckDesignValue,
+        neckWomensDetail: customer.neckDesignWomens,
+        neckWomensDesignValue: customer.neckDesignWomensValue,
         frontStrip: customer.frontStrip,
         frontStripValue: customer.frontStripValue,
         shoulderTera: customer.shoulderTera,
@@ -681,6 +687,11 @@ const neckDesignOptions: ImageChoiceOption[] = [
     { value: "Stepped", image: "/neck/stepped-ban.png" }
 ];
 
+const neckWomensDesignOptions: ImageChoiceOption[] = Array.from({ length: 45 }, (_, index) => ({
+    value: `Design ${index + 1}`,
+    image: `/women_neck/design_${index + 1}.png`
+}));
+
 const sleeveStyleOptions: ImageChoiceOption[] = [
     { value: "Long Tapered", image: "/sleeve/long-tapered.png" },
     { value: "Wide Tapered", image: "/sleeve/wide-tapered.png" },
@@ -712,11 +723,11 @@ const shoulderStrapOptions: ImageChoiceOption[] = [
     { value: "Straight", image: "/strap/straight-strap.svg" }
 ];
 
-const ghairaBottomOptions: ImageChoiceOption[] = [
-    { value: "Pleated - Curved", image: "/ghaira/pleated-curved.svg" },
-    { value: "Pleated - Straight", image: "/ghaira/pleated-straight.svg" },
-    { value: "Flared Panel", image: "/ghaira/flared-panel.svg" }
-];
+// const ghairaBottomOptions: ImageChoiceOption[] = [
+//     { value: "Pleated - Curved", image: "/ghaira/pleated-curved.svg" },
+//     { value: "Pleated - Straight", image: "/ghaira/pleated-straight.svg" },
+//     { value: "Flared Panel", image: "/ghaira/flared-panel.svg" }
+// ];
 
 const zipOptions: ImageChoiceOption[] = [
     { value: "Visible", image: "/zip/visible-zip.svg" },
@@ -821,7 +832,7 @@ function ImageChoiceField({
                     <span className="truncate">{summaryLabel}</span>
                     <span className="text-slate-400 transition group-open:rotate-180">▾</span>
                 </summary>
-                <div className="absolute z-10 mt-2 w-full rounded-md border border-[#d8ccb9] bg-white p-3 shadow-lg">
+                <div className="absolute z-10 mt-2 w-full max-h-96 overflow-y-auto rounded-md border border-[#d8ccb9] bg-white p-3 shadow-lg">
                     {multiSelect ? (
                         <p className="mb-2 text-xs font-medium text-slate-500">
                             Multiple selection allowed
@@ -1073,6 +1084,8 @@ export function CustomerOrderForm() {
         ladiesFlairValue: form.ladiesFlairValue,
         neckDesign: form.neckDetail,
         neckDesignValue: form.neckDesignValue,
+        neckDesignWomens: form.neckWomensDetail,
+        neckDesignWomensValue: form.neckWomensDesignValue,
         frontStrip: form.frontStrip,
         frontStripValue: form.frontStripValue,
         shoulderTera: form.shoulderTera,
@@ -1162,17 +1175,22 @@ export function CustomerOrderForm() {
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                             <Field label="Name" name="name" value={form.name} onChange={handleChange} />
-                            <Field
-                                label="Number (UK, e.g. 07911 123456)"
-                                name="number"
-                                value={form.number}
-                                onChange={handleChange}
-                                onBlur={handlePhoneBlur}
-                                error={phoneError}
-                                inputMode="numeric"
-                            />
-                            <Field label="Order date" name="orderDate" type="date" value={form.orderDate} onChange={handleChange} />
-                            <Field label="Delivery date" name="deliveryDate" type="date" value={form.deliveryDate} onChange={handleChange} />
+                            <div className="grid grid-cols-2 gap-4 sm:col-span-2">
+                                <Field
+                                    label="Number (UK, e.g. 07911 123456)"
+                                    name="number"
+                                    value={form.number}
+                                    onChange={handleChange}
+                                    onBlur={handlePhoneBlur}
+                                    error={phoneError}
+                                    inputMode="numeric"
+                                />
+                                <Field label="ID" name="id" value={form.id} onChange={handleChange} type="text" readOnly />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 sm:col-span-2">
+                                <Field label="Order date" name="orderDate" type="date" value={form.orderDate} onChange={handleChange} />
+                                <Field label="Delivery date" name="deliveryDate" type="date" value={form.deliveryDate} onChange={handleChange} />
+                            </div>
                             <SelectField
                                 label="Customer Category"
                                 name="customerCategory"
@@ -1202,7 +1220,6 @@ export function CustomerOrderForm() {
                                     { value: "cm", label: "Centimetres (cm)" }
                                 ]}
                             />
-                            <Field label="ID" name="id" value={form.id} onChange={handleChange} type="text" readOnly />
                             <TextAreaField label="Address" name="address" value={form.address} onChange={handleChange} />
                         </div>
                     </section>
@@ -1364,7 +1381,7 @@ export function CustomerOrderForm() {
                                 }}
                             />
                             <ImageChoiceField
-                                label="Neck"
+                                label="Mens Neck"
                                 value={form.neckDetail}
                                 onChange={(value) => setForm((current) => ({ ...current, neckDetail: value }))}
                                 options={neckDesignOptions}
@@ -1373,6 +1390,18 @@ export function CustomerOrderForm() {
                                     value: form.neckDesignValue,
                                     onChange: (value) =>
                                         setForm((current) => ({ ...current, neckDesignValue: value }))
+                                }}
+                            />
+                            <ImageChoiceField
+                                label="Womens Neck"
+                                value={form.neckWomensDetail}
+                                onChange={(value) => setForm((current) => ({ ...current, neckWomensDetail: value }))}
+                                options={neckWomensDesignOptions}
+                                extraField={{
+                                    label: "Womens Neck Design Value",
+                                    value: form.neckWomensDesignValue,
+                                    onChange: (value) =>
+                                        setForm((current) => ({ ...current, neckWomensDesignValue: value }))
                                 }}
                             />
                             <ImageChoiceField
@@ -1460,7 +1489,7 @@ export function CustomerOrderForm() {
                                         setForm((current) => ({ ...current, cuffDesignValue: value }))
                                 }}
                             />
-                            <ImageChoiceField
+                            {/* <ImageChoiceField
                                 label="Ghaira / Bottom"
                                 value={form.ghairaBottomDetail}
                                 onChange={(value) => setForm((current) => ({ ...current, ghairaBottomDetail: value }))}
@@ -1471,7 +1500,7 @@ export function CustomerOrderForm() {
                                     onChange: (value) =>
                                         setForm((current) => ({ ...current, ghairaBottomValue: value }))
                                 }}
-                            />
+                            /> */}
                             <Field label="Side Chaak / Slit" name="sideChaakSlit" value={form.sideChaakSlit} onChange={handleChange} />
                             <Field label="Plates / Darts" name="platesDarts" value={form.platesDarts} onChange={handleChange} />
                             <ImageChoiceField
