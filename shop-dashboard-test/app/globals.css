@@ -109,11 +109,33 @@ body {
 
   .a4-print-area,
   .a4-print-area *,
+  .order-print-area,
+  .order-print-area *,
   .invoice-print-area,
   .invoice-print-area *,
   .label-print-area,
   .label-print-area * {
     visibility: visible !important;
+  }
+
+  /* Customer order print sheet: prints like the screen; only the header turns plain (see .print-plain-header). */
+  .order-print-area {
+    position: static !important;
+    width: 196mm !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .order-print-area > .print-plain-header {
+    padding: 2mm 0 !important;
+  }
+
+  .order-print-area p,
+  .order-print-area span,
+  .order-print-area div {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   .label-print-area {
@@ -307,20 +329,4 @@ body {
     filter: none !important;
   }
 
-  .print-plain-card {
-    background: #ffffff !important;
-    border: none !important;
-    border-bottom: 1px solid #d1d5db !important;
-    border-radius: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-
-  .a4-print-area .h-44 {
-    height: 28mm !important;
-  }
-
-  .a4-print-area .w-\[2in\] {
-    width: 1.3in !important;
-  }
 }

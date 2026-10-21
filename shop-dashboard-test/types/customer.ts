@@ -5,12 +5,15 @@ export type CustomerCategory = "Men" | "Ladies";
 export type TailorCustomer = {
   id: string;
   createdAt: string;
+  // Assigned once by the server (INV-0001, INV-0002, ...) and never changed.
+  invoiceNumber?: string;
   customerName: string;
   customerIdNumber: string;
   phoneNumber: string;
   address: string;
   orderDate: string;
   deliveryDate: string;
+  quantity: string;
   notes: string;
   customerCategory: CustomerCategory;
   outfitType: string;
@@ -129,6 +132,7 @@ export const emptyCustomerForm: CustomerFormValues = {
   address: "",
   orderDate: "",
   deliveryDate: "",
+  quantity: "1",
   notes: "",
   customerCategory: "Men",
   outfitType: "Normal suit",

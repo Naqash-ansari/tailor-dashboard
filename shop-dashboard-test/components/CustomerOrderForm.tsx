@@ -4,13 +4,30 @@ import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchCustomer, fetchCustomers, saveCustomerRecord } from "@/lib/customerApi";
+import {
+    addGarmentOptionRecord,
+    deleteGarmentOptionRecord,
+    fetchCustomer,
+    fetchCustomers,
+    fetchGarmentOptions,
+    saveCustomerRecord
+} from "@/lib/customerApi";
+import { MeasurementCalculator } from "@/components/MeasurementCalculator";
+import { stripLegacyIdPrefix } from "@/lib/customerId";
+import {
+    cleanGarmentValue,
+    defaultGarmentOptions,
+    normalizeGarmentValue,
+    type GarmentKind,
+    type GarmentOptions
+} from "@/lib/garmentOptions";
 import { isValidUkPhone, sanitizePhoneDigits } from "@/lib/ukPhone";
 import { emptyCustomerForm, type CustomerFormValues, type TailorCustomer } from "@/types/customer";
 
 type FormState = {
     orderDate: string;
     deliveryDate: string;
+    quantity: string;
     customerCategory: "Men" | "Women";
     id: string;
     name: string;
@@ -116,6 +133,7 @@ type FormState = {
 const initialState: FormState = {
     orderDate: "",
     deliveryDate: "",
+    quantity: "1",
     customerCategory: "Men",
     id: generateCustomerId(),
     name: "",
@@ -231,7 +249,8 @@ function generateCustomerId() {
     const day = String(now.getDate()).padStart(2, "0");
     const month = String(now.getMonth() + 1).padStart(2, "0");
     const year = String(now.getFullYear()).slice(-2);
-    return `AANS-${day}${month}${year}`;
+    return `${day}${month}${year}`;
+    // return `AANS-${day}${month}${year}`;
 }
 
 async function generateUniqueCustomerId(): Promise<string> {
@@ -269,8 +288,9 @@ function mapCustomerToFormState(customer: TailorCustomer): FormState {
     return {
         orderDate: customer.orderDate,
         deliveryDate: customer.deliveryDate,
+        quantity: customer.quantity || "1",
         customerCategory: customer.customerCategory === "Ladies" ? "Women" : "Men",
-        id: customer.customerIdNumber || generateCustomerId(),
+        id: stripLegacyIdPrefix(customer.customerIdNumber || "") || generateCustomerId(),
         name: customer.customerName,
         number: customer.phoneNumber,
         address: customer.address,
@@ -415,26 +435,6 @@ function getGarmentOptions(category: "Men" | "Women") {
         { value: "Dress pants", label: "Dress pants" }
     ];
 }
-
-const upperGarmentPartOptions = [
-    { value: "", label: "Select upper garment" },
-    { value: "Kurta", label: "Kurta" },
-    { value: "Shirt", label: "Shirt" },
-    { value: "Coat", label: "Coat" },
-    { value: "Shirt & Coat", label: "Shirt & Coat" },
-    { value: "Waistcoat", label: "Waistcoat" },
-    { value: "Blouse", label: "Blouse" },
-    { value: "Gown", label: "Gown" },
-    { value: "None", label: "None" }
-];
-
-const lowerGarmentPartOptions = [
-    { value: "", label: "Select lower garment" },
-    { value: "Shalwar", label: "Shalwar" },
-    { value: "Trouser", label: "Trouser" },
-    { value: "Skirt", label: "Skirt" },
-    { value: "None", label: "None" }
-];
 
 const garmentUpperPartMap: Record<string, string> = {
     "Normal suit": "Kurta",
@@ -643,6 +643,89 @@ function ComboField({
     );
 }
 
+function GarmentComboField({
+    label,
+    value,
+    options,
+    onChange,
+    onDeleteOption
+}: {
+    label: string;
+    value: string;
+    options: string[];
+    onChange: (value: string, picked: boolean) => void;
+    onDeleteOption: (option: string) => void;
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const search = normalizeGarmentValue(value);
+    const visibleOptions = options.filter(
+        (option) => !search || normalizeGarmentValue(option).includes(search)
+    );
+
+    return (
+        <label className="relative block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">{label}</span>
+            <input
+                className={inputClass}
+                value={value}
+                onChange={(event) => {
+                    onChange(event.target.value, false);
+                    setIsOpen(true);
+                }}
+                onFocus={() => setIsOpen(true)}
+                onBlur={() => setIsOpen(false)}
+                onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                        setIsOpen(false);
+                    }
+                }}
+                placeholder={`Select or type ${label.toLowerCase()}`}
+                autoComplete="off"
+            />
+            {isOpen ? (
+                <ul
+                    className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#d8ccb9] bg-white py-1 shadow-lg"
+                    // Keep focus in the input so clicking an option or delete doesn't close the list first.
+                    onMouseDown={(event) => event.preventDefault()}
+                >
+                    {visibleOptions.length === 0 ? (
+                        <li className="px-3 py-2 text-sm text-slate-500">
+                            New value. It will be added to the list on save.
+                        </li>
+                    ) : (
+                        visibleOptions.map((option) => (
+                            <li
+                                key={option}
+                                className="flex items-center justify-between gap-2 px-3 py-1.5 text-sm hover:bg-[#fbfaf7]"
+                            >
+                                <button
+                                    type="button"
+                                    className="flex-1 text-left text-slate-900"
+                                    onClick={() => {
+                                        onChange(option, true);
+                                        setIsOpen(false);
+                                    }}
+                                >
+                                    {option}
+                                </button>
+                                <button
+                                    type="button"
+                                    title={`Delete "${option}" from the list`}
+                                    aria-label={`Delete ${option}`}
+                                    className="rounded px-1.5 text-base font-bold leading-none text-slate-400 hover:bg-red-50 hover:text-red-600"
+                                    onClick={() => onDeleteOption(option)}
+                                >
+                                    ×
+                                </button>
+                            </li>
+                        ))
+                    )}
+                </ul>
+            ) : null}
+        </label>
+    );
+}
+
 type ImageChoiceOption = { value: string; image: string };
 
 const frontBackMensOptions: ImageChoiceOption[] = [
@@ -776,7 +859,7 @@ function ImageChoiceField({
     onChange,
     options,
     extraField,
-    multiSelect = false
+    multiSelect = true
 }: {
     label: string;
     value: string;
@@ -843,8 +926,8 @@ function ImageChoiceField({
                             <label
                                 key={option.value}
                                 className={`flex cursor-pointer flex-col items-center gap-2 rounded-md border p-2 text-center transition ${isChecked(option.value)
-                                        ? "border-[#0d6b5f] bg-[#0d6b5f]/5"
-                                        : "border-[#e1d6c4] hover:bg-[#fbfaf7]"
+                                    ? "border-[#0d6b5f] bg-[#0d6b5f]/5"
+                                    : "border-[#e1d6c4] hover:bg-[#fbfaf7]"
                                     }`}
                             >
                                 <input
@@ -894,6 +977,100 @@ export function CustomerOrderForm() {
     const [form, setForm] = useState<FormState>(initialState);
     const [saveError, setSaveError] = useState("");
     const [phoneError, setPhoneError] = useState("");
+    const [garmentOptions, setGarmentOptions] = useState<GarmentOptions>(defaultGarmentOptions);
+    const [notice, setNotice] = useState<{ tone: "info" | "warning"; messages: string[] } | null>(null);
+    const [pendingGarmentDelete, setPendingGarmentDelete] = useState<{
+        kind: GarmentKind;
+        option: string;
+    } | null>(null);
+    // Values typed by hand (not picked from the list) get a duplicate check notice on save.
+    const [typedGarments, setTypedGarments] = useState<Record<GarmentKind, boolean>>({
+        upper: false,
+        lower: false
+    });
+
+    useEffect(() => {
+        fetchGarmentOptions()
+            .then(setGarmentOptions)
+            .catch(() => undefined);
+    }, []);
+
+    useEffect(() => {
+        if (!notice) {
+            return;
+        }
+
+        const timer = window.setTimeout(() => setNotice(null), 5000);
+        return () => window.clearTimeout(timer);
+    }, [notice]);
+
+    useEffect(() => {
+        if (!pendingGarmentDelete) {
+            return;
+        }
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setPendingGarmentDelete(null);
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [pendingGarmentDelete]);
+
+    const handleGarmentChange = (kind: GarmentKind, value: string, picked: boolean) => {
+        setForm((current) => ({
+            ...current,
+            [kind === "upper" ? "upperGarmentPart" : "lowerGarmentPart"]: value
+        }));
+        setTypedGarments((current) => ({ ...current, [kind]: !picked }));
+    };
+
+    const confirmDeleteGarmentOption = async () => {
+        if (!pendingGarmentDelete) {
+            return;
+        }
+
+        const { kind, option } = pendingGarmentDelete;
+        setPendingGarmentDelete(null);
+
+        try {
+            await deleteGarmentOptionRecord(kind, option);
+            setGarmentOptions((current) => ({
+                ...current,
+                [kind]: current[kind].filter((item) => item !== option)
+            }));
+            setNotice({ tone: "info", messages: [`"${option}" deleted from the list.`] });
+        } catch {
+            setNotice({ tone: "warning", messages: [`Unable to delete "${option}". Please try again.`] });
+        }
+    };
+
+    // Adds new garment values to the dropdown list and returns the value to save.
+    // An existing value (any capitalisation/spacing) is reused instead of adding a duplicate.
+    const resolveGarmentValue = async (kind: GarmentKind, rawValue: string, messages: string[]) => {
+        const value = cleanGarmentValue(rawValue);
+        const listName = kind === "upper" ? "Upper Garment" : "Lower Garment";
+
+        if (!value) {
+            return "";
+        }
+
+        try {
+            const result = await addGarmentOptionRecord(kind, value);
+
+            if (result.status === "added") {
+                messages.push(`"${result.value}" added to the ${listName} list.`);
+            } else if (typedGarments[kind] || result.value !== value) {
+                messages.push(`"${result.value}" is already in the ${listName} list.`);
+            }
+
+            return result.value;
+        } catch {
+            return value;
+        }
+    };
     const [isSaving, setIsSaving] = useState(false);
     const [loadedEditRecord, setLoadedEditRecord] = useState(false);
     const [loadedSourceCustomer, setLoadedSourceCustomer] = useState(false);
@@ -928,7 +1105,8 @@ export function CustomerOrderForm() {
                     return;
                 }
 
-                const sameCustomerId = customer.customerIdNumber || (await generateUniqueCustomerId());
+                const sameCustomerId =
+                    stripLegacyIdPrefix(customer.customerIdNumber || "") || (await generateUniqueCustomerId());
 
                 setForm({
                     ...initialState,
@@ -975,7 +1153,9 @@ export function CustomerOrderForm() {
                 ? sanitizeDecimalInput(value)
                 : name === "number"
                     ? sanitizePhoneDigits(value)
-                    : value;
+                    : name === "quantity"
+                        ? value.replace(/\D/g, "")
+                        : value;
 
         if (name === "number") {
             setPhoneError("");
@@ -984,8 +1164,15 @@ export function CustomerOrderForm() {
         setForm((current) => {
             const nextValues = { ...current, [name]: sanitizedValue };
 
-            if (name === "totalPayment" || name === "advancePayment" || name === "discount") {
-                const total = Number.parseFloat(nextValues.totalPayment || "0");
+            if (
+                name === "totalPayment" ||
+                name === "advancePayment" ||
+                name === "discount" ||
+                (name === "quantity" && nextValues.totalPayment)
+            ) {
+                // "Total Payment" is the price of one suit, so the order total is qty × price.
+                const quantity = Number.parseInt(nextValues.quantity || "1", 10) || 1;
+                const total = quantity * Number.parseFloat(nextValues.totalPayment || "0");
                 const advance = Number.parseFloat(nextValues.advancePayment || "0");
                 const discount = Number.parseFloat(nextValues.discount || "0");
                 const remaining = Math.max(total - advance - discount, 0);
@@ -998,8 +1185,9 @@ export function CustomerOrderForm() {
             if (name === "measurementType") {
                 return {
                     ...nextValues,
-                    upperGarmentPart: garmentUpperPartMap[sanitizedValue] ?? "",
-                    lowerGarmentPart: garmentLowerPartMap[sanitizedValue] ?? ""
+                    // Only fill in a default; never wipe a value the user already entered.
+                    upperGarmentPart: garmentUpperPartMap[sanitizedValue] ?? current.upperGarmentPart,
+                    lowerGarmentPart: garmentLowerPartMap[sanitizedValue] ?? current.lowerGarmentPart
                 };
             }
 
@@ -1016,11 +1204,12 @@ export function CustomerOrderForm() {
     const buildCustomerPayload = (): CustomerFormValues => ({
         ...emptyCustomerForm,
         customerName: form.name,
-        customerIdNumber: form.id,
+        customerIdNumber: stripLegacyIdPrefix(form.id),
         phoneNumber: form.number,
         address: form.address,
         orderDate: form.orderDate,
         deliveryDate: form.deliveryDate,
+        quantity: form.quantity || "1",
         customerCategory: form.customerCategory === "Women" ? "Ladies" : "Men",
         outfitType: form.measurementType || "Normal suit",
         measurementType: form.measurementType,
@@ -1033,6 +1222,7 @@ export function CustomerOrderForm() {
         shoulder: form.shoulder,
         shoulderDown: form.shoulderDown,
         shoulderStrap: form.shoulderStrap,
+        shoulderToApexPoint: form.shoulderToApexPoint,
         frontChest: form.frontChest,
         upperChest: form.upperChest,
         chestWidth: form.chest,
@@ -1135,7 +1325,27 @@ export function CustomerOrderForm() {
         setIsSaving(true);
 
         try {
-            await saveCustomerRecord(buildCustomerPayload(), editId);
+            const messages: string[] = [];
+            const upperGarmentPart = await resolveGarmentValue("upper", form.upperGarmentPart, messages);
+            const lowerGarmentPart = await resolveGarmentValue("lower", form.lowerGarmentPart, messages);
+
+            await saveCustomerRecord(
+                { ...buildCustomerPayload(), upperGarmentPart, lowerGarmentPart },
+                editId
+            );
+
+            if (messages.length === 0) {
+                router.push("/customers");
+                return;
+            }
+
+            // Show the garment list notice briefly before leaving the form.
+            setForm((current) => ({ ...current, upperGarmentPart, lowerGarmentPart }));
+            setNotice({
+                tone: messages.some((message) => message.includes("already")) ? "warning" : "info",
+                messages
+            });
+            await new Promise((resolve) => window.setTimeout(resolve, 2500));
             router.push("/customers");
         } catch {
             setSaveError("Unable to save customer. Please try again.");
@@ -1146,6 +1356,78 @@ export function CustomerOrderForm() {
 
     return (
         <main className="min-h-screen bg-[#f7f4ee] px-4 py-6 sm:px-6 lg:px-8">
+            {notice ? (
+                <div
+                    role="status"
+                    className={`fixed right-4 top-4 z-50 w-[min(92vw,380px)] rounded-xl border bg-white p-4 shadow-2xl ${notice.tone === "warning" ? "border-amber-300" : "border-[#0d6b5f]/40"
+                        }`}
+                >
+                    <div className="flex items-start justify-between gap-3">
+                        <div className="space-y-1">
+                            {notice.messages.map((message) => (
+                                <p
+                                    key={message}
+                                    className={`text-sm font-semibold ${notice.tone === "warning" ? "text-amber-800" : "text-[#0d6b5f]"}`}
+                                >
+                                    {message}
+                                </p>
+                            ))}
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setNotice(null)}
+                            aria-label="Close notification"
+                            className="text-sm font-semibold text-slate-500 hover:text-slate-800"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            ) : null}
+            {pendingGarmentDelete ? (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4"
+                    onClick={() => setPendingGarmentDelete(null)}
+                >
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="delete-garment-title"
+                        className="w-full max-w-sm overflow-hidden rounded-xl border border-[#e1d6c4] bg-white shadow-2xl"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <div className="bg-[#122b2a] px-5 py-3">
+                            <h2 id="delete-garment-title" className="text-base font-bold text-white">
+                                Delete from list
+                            </h2>
+                        </div>
+                        <div className="space-y-2 px-5 py-4">
+                            <p className="text-sm text-slate-800">
+                                Delete <span className="font-bold">&quot;{pendingGarmentDelete.option}&quot;</span> from the{" "}
+                                {pendingGarmentDelete.kind === "upper" ? "Upper Garment" : "Lower Garment"} list?
+                            </p>
+                            <p className="text-xs text-slate-500">Saved orders will not change.</p>
+                        </div>
+                        <div className="flex justify-end gap-3 border-t border-[#e1d6c4] bg-[#fbfaf7] px-5 py-3">
+                            <button
+                                type="button"
+                                onClick={() => setPendingGarmentDelete(null)}
+                                className="rounded-md border border-[#d8ccb9] bg-white px-4 py-2 text-sm font-bold text-slate-800 hover:bg-[#fbfaf7]"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                autoFocus
+                                onClick={confirmDeleteGarmentOption}
+                                className="rounded-md bg-red-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-red-700"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ) : null}
             <div className="mx-auto mb-4 max-w-6xl">
                 <Link
                     href="/customers"
@@ -1187,9 +1469,10 @@ export function CustomerOrderForm() {
                                 />
                                 <Field label="ID" name="id" value={form.id} onChange={handleChange} type="text" readOnly />
                             </div>
-                            <div className="grid grid-cols-2 gap-4 sm:col-span-2">
+                            <div className="grid grid-cols-3 gap-4 sm:col-span-2">
                                 <Field label="Order date" name="orderDate" type="date" value={form.orderDate} onChange={handleChange} />
                                 <Field label="Delivery date" name="deliveryDate" type="date" value={form.deliveryDate} onChange={handleChange} />
+                                <Field label="Qty" name="quantity" value={form.quantity} onChange={handleChange} inputMode="numeric" />
                             </div>
                             <SelectField
                                 label="Customer Category"
@@ -1225,19 +1508,22 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                        <div className="relative mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
                             <h2 className="text-lg font-bold text-white">Upper Body Measurements</h2>
+                            <div className="absolute right-3 top-1/2 z-30 -translate-y-1/2">
+                                <MeasurementCalculator />
+                            </div>
                             {/* <p className="mt-1 text-sm text-[#e8dfd2]">
                                 Select one unit below. It will apply to all upper and lower body measurements.
                             </p> */}
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                            <ComboField
+                            <GarmentComboField
                                 label="Upper Garment"
-                                name="upperGarmentPart"
                                 value={form.upperGarmentPart}
-                                onChange={handleChange}
-                                options={upperGarmentPartOptions}
+                                options={garmentOptions.upper}
+                                onChange={(value, picked) => handleGarmentChange("upper", value, picked)}
+                                onDeleteOption={(option) => setPendingGarmentDelete({ kind: "upper", option })}
                             />
                             <Field label="Length" name="qameezLength" value={form.qameezLength} onChange={handleChange} />
                             <Field label="Blouse Length" name="blouseLength" value={form.blouseLength} onChange={handleChange} />
@@ -1266,19 +1552,22 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                        <div className="relative mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
                             <h2 className="text-lg font-bold text-white">Lower Body Measurements</h2>
+                            <div className="absolute right-3 top-1/2 z-30 -translate-y-1/2">
+                                <MeasurementCalculator />
+                            </div>
                             {/* <p className="mt-1 text-sm text-[#e8dfd2]">
                                 Trouser, shalwar, skirt, and lower-garment measurements.
                             </p> */}
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                            <ComboField
+                            <GarmentComboField
                                 label="Lower Garment"
-                                name="lowerGarmentPart"
                                 value={form.lowerGarmentPart}
-                                onChange={handleChange}
-                                options={lowerGarmentPartOptions}
+                                options={garmentOptions.lower}
+                                onChange={(value, picked) => handleGarmentChange("lower", value, picked)}
+                                onDeleteOption={(option) => setPendingGarmentDelete({ kind: "lower", option })}
                             />
                             <Field label="Length" name="shalwarLength" value={form.shalwarLength} onChange={handleChange} />
                             <Field label="Skirt Length" name="skirtLength" value={form.skirtLength} onChange={handleChange} />
@@ -1566,14 +1855,34 @@ export function CustomerOrderForm() {
                             </p> */}
                         </div>
                         <div className="grid gap-4 md:grid-cols-4">
+                            <Field label="Qty" name="quantity" value={form.quantity} onChange={handleChange} inputMode="numeric" />
                             <Field
-                                label="Total Payment (£)"
+                                label="Price per Suit (£)"
                                 name="totalPayment"
                                 value={form.totalPayment}
                                 onChange={handleChange}
                                 inputMode="decimal"
                                 pattern="[0-9]*[.]?[0-9]*"
                             />
+                            <label className="block">
+                                <span className="mb-1 block text-sm font-medium text-slate-700">
+                                    Order Total (£)
+                                    <span className="ml-1 text-xs font-normal text-slate-500">Qty × Price</span>
+                                </span>
+                                <input
+                                    className={`${inputClass} bg-[#f7f4ee] font-bold`}
+                                    value={
+                                        form.totalPayment
+                                            ? (
+                                                (Number.parseInt(form.quantity || "1", 10) || 1) *
+                                                (Number.parseFloat(form.totalPayment) || 0)
+                                            ).toFixed(2)
+                                            : ""
+                                    }
+                                    readOnly
+                                    tabIndex={-1}
+                                />
+                            </label>
                             <Field
                                 label="Advance Payment (£)"
                                 name="advancePayment"

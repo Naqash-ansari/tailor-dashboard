@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { ShopBrandText } from "@/components/ShopBrandText";
 import { fetchCustomer } from "@/lib/customerApi";
 import type { TailorCustomer } from "@/types/customer";
 
@@ -89,20 +90,7 @@ export function CustomerLabelPage({ customerId }: { customerId: string }) {
                     className="h-full w-full object-contain"
                   />
                 </div>
-                <div className="flex flex-col items-start gap-1 text-left">
-                  <p className="brand-name text-sm font-black leading-none text-slate-950">
-                    Aans Fabrics &amp; Tailors Ltd
-                  </p>
-                  <p className="w-[2.6in] whitespace-normal text-[9px] font-semibold uppercase leading-tight text-slate-500">
-                    Specialists in Ladies &amp; Gents Tailoring &amp; Alteration
-                  </p>
-                  <p className="w-[2.6in] whitespace-normal text-[10px] leading-tight text-slate-500">
-                    343 Cheetham Hill Road, Manchester, M8 0SF
-                  </p>
-                  <p className="text-[10px] leading-none text-slate-500">
-                    0161 509 7737, 07915 253239
-                  </p>
-                </div>
+                <ShopBrandText className="text-slate-950" />
               </div>
             </div>
           </section>

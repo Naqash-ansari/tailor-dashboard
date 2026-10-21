@@ -64,7 +64,7 @@ function getCompletionLabel(order: TailorCustomer) {
 
   if (remaining <= 0 && order.stitchingPrice) {
     return {
-      label: "Payment clear",
+      label: "Payment paid",
       className: "bg-blue-50 text-blue-700"
     };
   }
@@ -81,7 +81,12 @@ function isOrderClosed(order: TailorCustomer) {
 
 function buildWhatsAppLink(order: TailorCustomer) {
   const internationalNumber = toUkInternationalPhone(order.phoneNumber);
-  const message = `Hi ${order.customerName || "there"}, your order (${order.outfitType || "suit"}) is complete and ready for collection. - Aans Fabrics & Tailors Ltd`;
+  const name = order.customerName || "there";
+  const outfit = order.outfitType || "suit";
+  const message =
+    order.orderStatus === "Delivered"
+      ? `Hi ${name}, your order (${outfit}) has been delivered. Thank you for choosing us! - Aans Fabrics & Tailors Ltd`
+      : `Hi ${name}, your order (${outfit}) is complete and ready for collection. - Aans Fabrics & Tailors Ltd`;
   return `https://wa.me/${internationalNumber}?text=${encodeURIComponent(message)}`;
 }
 
@@ -241,7 +246,7 @@ export function CustomersTable() {
                   >
                     {getCompletionLabel(order).label}
                   </span>
-                  {order.orderStatus === "Completed" ? (
+                  {order.orderStatus === "Completed" || order.orderStatus === "Delivered" ? (
                     <a
                       href={buildWhatsAppLink(order)}
                       target="_blank"
@@ -279,7 +284,10 @@ export function CustomersTable() {
                   <div>Sleeve: {order.sleeveLength || "-"} {order.measurementUnit ?? "inch"}</div>
                 </td>
                 <td className="px-4 py-4 text-slate-700">
-                  <div>Price: £{order.stitchingPrice || "0"}</div>
+                  <div>
+                    Price: £{order.stitchingPrice || "0"}
+                    {Number.parseInt(order.quantity || "1", 10) > 1 ? ` × ${order.quantity}` : ""}
+                  </div>
                   <div>Advance: £{order.advancePayment || "0"}</div>
                   <div>Remaining: £{order.remainingPayment || "0"}</div>
                   <div
@@ -388,7 +396,7 @@ export function CustomersTable() {
             },
             {
               title: "Completed orders",
-              description: "Delivered aur payment clear orders.",
+              description: "Delivered aur payment paid orders.",
               tone: "complete"
             }
           )

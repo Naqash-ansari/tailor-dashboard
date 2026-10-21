@@ -1,3 +1,4 @@
+import type { GarmentKind, GarmentOptions } from "@/lib/garmentOptions";
 import type { CustomerFormValues, TailorCustomer } from "@/types/customer";
 
 const LEGACY_STORAGE_KEY = "tailor-dashboard-customers";
@@ -46,6 +47,46 @@ export async function deleteCustomerRecord(id: string) {
 
   if (!response.ok) {
     throw new Error("Unable to delete customer");
+  }
+}
+
+export async function fetchGarmentOptions() {
+  const response = await fetch("/api/garment-options", { cache: "no-store" });
+
+  if (!response.ok) {
+    throw new Error("Unable to load garment options");
+  }
+
+  return (await response.json()) as GarmentOptions;
+}
+
+export async function addGarmentOptionRecord(kind: GarmentKind, value: string) {
+  const response = await fetch("/api/garment-options", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ kind, value })
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to save garment option");
+  }
+
+  return (await response.json()) as { status: "added" | "exists"; value: string };
+}
+
+export async function deleteGarmentOptionRecord(kind: GarmentKind, value: string) {
+  const response = await fetch("/api/garment-options", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ kind, value })
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to delete garment option");
   }
 }
 
