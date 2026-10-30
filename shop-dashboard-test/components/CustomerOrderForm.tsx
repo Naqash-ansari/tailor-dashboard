@@ -778,6 +778,7 @@ const neckWomensDesignOptions: ImageChoiceOption[] = Array.from({ length: 45 }, 
 const sleeveStyleOptions: ImageChoiceOption[] = [
     { value: "Long Tapered", image: "/sleeve/long-tapered.png" },
     { value: "Wide Tapered", image: "/sleeve/wide-tapered.png" },
+    { value: "Wide Tapered 2", image: "/sleeve/wide-tapered-2.jpg" },
     { value: "Narrow Tapered", image: "/sleeve/narrow-tapered.png" },
     { value: "Sleeve Cap", image: "/sleeve/sleeve-cap.png" }
 ];
@@ -869,6 +870,7 @@ function ImageChoiceField({
         label: string;
         value: string;
         onChange: (value: string) => void;
+        multiline?: boolean;
     };
     multiSelect?: boolean;
 }) {
@@ -955,12 +957,21 @@ function ImageChoiceField({
                             <span className="mb-1 block text-xs font-semibold text-slate-700">
                                 {extraField.label}
                             </span>
-                            <input
-                                type="text"
-                                className={inputClass}
-                                value={extraField.value}
-                                onChange={(event) => extraField.onChange(event.target.value)}
-                            />
+                            {extraField.multiline ? (
+                                <textarea
+                                    className={inputClass}
+                                    rows={3}
+                                    value={extraField.value}
+                                    onChange={(event) => extraField.onChange(event.target.value)}
+                                />
+                            ) : (
+                                <input
+                                    type="text"
+                                    className={inputClass}
+                                    value={extraField.value}
+                                    onChange={(event) => extraField.onChange(event.target.value)}
+                                />
+                            )}
                         </label>
                     ) : null}
                 </div>
@@ -1630,7 +1641,8 @@ export function CustomerOrderForm() {
                                     label: "Front/Back Mens Value",
                                     value: form.frontBackMensValue,
                                     onChange: (value) =>
-                                        setForm((current) => ({ ...current, frontBackMensValue: value }))
+                                        setForm((current) => ({ ...current, frontBackMensValue: value })),
+                                    multiline: true
                                 }}
                             />
                             <ImageChoiceField
@@ -1816,7 +1828,8 @@ export function CustomerOrderForm() {
                                     label: "Shalwar Value",
                                     value: form.shalwarValue,
                                     onChange: (value) =>
-                                        setForm((current) => ({ ...current, shalwarValue: value }))
+                                        setForm((current) => ({ ...current, shalwarValue: value })),
+                                    multiline: true
                                 }}
                             />
                             <ImageChoiceField
@@ -1828,7 +1841,8 @@ export function CustomerOrderForm() {
                                     label: "Pant / Trouser Value",
                                     value: form.pantTrouserValue,
                                     onChange: (value) =>
-                                        setForm((current) => ({ ...current, pantTrouserValue: value }))
+                                        setForm((current) => ({ ...current, pantTrouserValue: value })),
+                                    multiline: true
                                 }}
                             />
                             <ImageChoiceField

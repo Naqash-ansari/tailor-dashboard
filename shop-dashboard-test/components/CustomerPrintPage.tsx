@@ -108,7 +108,7 @@ function MeasurementSection({
               }`}
           >
             <span className="font-['Times_New_Roman',Times,serif] font-bold text-slate-700">{label}</span>
-            <span className="font-['Times_New_Roman',Times,serif] font-bold text-slate-950">{value}</span>
+            <span className="font-['Times_New_Roman',Times,serif] text-base font-bold text-slate-950">{value}</span>
           </div>
         ))}
       </div>
@@ -165,6 +165,7 @@ const neckDesignWomensImages: Record<string, string> = Object.fromEntries(
 const sleeveStyleDesignImages: Record<string, string> = {
   "Long Tapered": "/sleeve/long-tapered.png",
   "Wide Tapered": "/sleeve/wide-tapered.png",
+  "Wide Tapered 2": "/sleeve/wide-tapered-2.jpg",
   "Narrow Tapered": "/sleeve/narrow-tapered.png",
   "Sleeve Cap": "/sleeve/sleeve-cap.png"
 };
@@ -296,9 +297,13 @@ function DesignImageSection({
               {/* The value sits in the middle of every selected image, so it never lands on the join between two. */}
               {valueOnImage && measurementValue ? (
                 <p
-                  className={`pointer-events-none absolute z-10 flex justify-center font-['Times_New_Roman',Times,serif] text-xl font-bold leading-none text-[#0d6b5f] ${valueNearTop ? "inset-x-0 top-[22%]" : "inset-0 items-center"} ${(typeof valueShiftLeft === "function" ? valueShiftLeft(designName) : valueShiftLeft) ? "pr-[35%]" : ""}`}
+                  className={`pointer-events-none absolute z-10 flex justify-center font-['Times_New_Roman',Times,serif] text-xs font-bold leading-none text-[#0d6b5f] ${valueNearTop ? "inset-x-0 top-[22%]" : "inset-0 items-center"} ${(typeof valueShiftLeft === "function" ? valueShiftLeft(designName) : valueShiftLeft) ? "pr-[35%]" : ""}`}
                 >
-                  <span className={valueOnWhite ? "rounded-sm bg-white px-1 py-0.5" : ""}>{measurementValue}</span>
+                  <span
+                    className={`whitespace-pre-line text-center leading-tight ${valueOnWhite ? "rounded-sm bg-white px-1 py-0.5" : ""}`}
+                  >
+                    {measurementValue}
+                  </span>
                 </p>
               ) : null}
               {/* "w-auto" keeps a wide drawing's own shape at the given height instead of squeezing it into a box. */}
@@ -321,7 +326,7 @@ function DesignImageSection({
         </div>
         {measurementValue && !valueOnImage ? (
           <div className="text-center leading-none">
-            <p className="font-['Times_New_Roman',Times,serif] text-xl font-bold text-[#0d6b5f]">{measurementValue}</p>
+            <p className="font-['Times_New_Roman',Times,serif] text-xs font-bold text-[#0d6b5f]">{measurementValue}</p>
             {/* <p className="mt-0.5 text-[9px] font-bold uppercase tracking-wide text-[#0d6b5f]/70">
               {unit}
             </p> */}
@@ -442,8 +447,13 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 {(() => {
                   const stitchingNotes: Array<[string, string]> = [
                     ["Gender", customer.customerCategory === "Ladies" ? "Female" : "Male"] as [string, string],
+                    [
+                      "Garment Type",
+                      [customer.upperGarmentPart, customer.lowerGarmentPart]
+                        .filter(Boolean)
+                        .join(" ")
+                    ] as [string, string],
                     ["Fitting Style", customer.fittingStyle] as [string, string],
-                    ["Seam Style", customer.seamStyle] as [string, string],
                     ["Side Chaak / Slit", customer.sideChaakSlit] as [string, string],
                     ["Plates / Darts", customer.platesDarts] as [string, string],
                     ["Button", customer.buttonDetails] as [string, string],
