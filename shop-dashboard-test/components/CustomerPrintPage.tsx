@@ -422,8 +422,8 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
             </div>
             <div className="border-b border-[#e1d6c4]" />
             <div className="flex flex-row gap-4 p-6">
-              <div className="flex w-64 shrink-0 flex-col gap-4 border-r border-[#e1d6c4] pr-4">
-                <h2 className="whitespace-nowrap border-b border-[#e1d6c4] pb-2 text-center font-serif text-sm font-bold uppercase text-[#0d6b5f]">
+              <div className="flex w-64 shrink-0 flex-col gap-1 border-r border-[#e1d6c4] pr-4">
+                <h2 className="whitespace-nowrap rounded-md bg-[#0d6b5f] py-1 text-center font-serif text-sm font-bold uppercase text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
                   Measurement Detail ({customer.measurementUnit || "inch"})
                 </h2>
                 <MeasurementSection
@@ -440,7 +440,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 />
               </div>
               <div className="min-w-0 flex-1 space-y-4">
-                <h2 className="border-b border-[#e1d6c4] pb-2 text-center text-sm font-black uppercase tracking-wide text-[#0d6b5f]">
+                <h2 className="rounded-md bg-[#0d6b5f] py-1 text-center text-sm font-black uppercase tracking-wide text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
                   Designing &amp; Stitching Details
                 </h2>
                 {(() => {
