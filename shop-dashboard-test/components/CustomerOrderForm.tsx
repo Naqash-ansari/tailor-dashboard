@@ -1602,8 +1602,11 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                        <div className="relative mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
                             <h2 className="text-lg font-bold text-white">Designing &amp; Stitching Details</h2>
+                            <div className="absolute right-3 top-1/2 z-30 -translate-y-1/2">
+                                <MeasurementCalculator />
+                            </div>
                             {/* <p className="mt-1 text-sm text-[#e8dfd2]">
                                 Describe garment construction and finishing preferences.
                             </p> */}

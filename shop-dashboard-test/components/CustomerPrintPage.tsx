@@ -11,19 +11,17 @@ import type { TailorCustomer } from "@/types/customer";
 
 function DetailRow({
   label,
-  value,
-  emphasize
+  value
 }: {
   label: string;
   value: string;
-  emphasize?: boolean;
 }) {
   return (
     <div className="flex items-center gap-1 whitespace-nowrap">
-      <span className="text-[9px] font-bold uppercase tracking-wide text-[#e8dfd2]">
+      <span className="text-sm font-bold text-[#e8dfd2]">
         {label}:
       </span>
-      <span className={`font-bold text-white ${emphasize ? "text-sm" : "text-[10px]"}`}>
+      <span className="text-sm font-bold text-white">
         {value}
       </span>
     </div>
@@ -96,8 +94,9 @@ function MeasurementSection({
   }
 
   return (
-    <div className="rounded-lg p-4">
-      <h3 className="border-b border-[#0d6b5f] pb-1 text-center font-serif text-sm font-bold uppercase tracking-wide text-[#0d6b5f]">
+    <div className="rounded-lg px-4">
+      {/* Exact colour adjust keeps the green background when printing. */}
+      <h3 className="rounded-md border border-[#0d6b5f] bg-[#0d6b5f] py-1 text-center font-serif text-sm font-bold uppercase tracking-wide text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
         {title}
       </h3>
       <div className={rows.length > 0 ? "mt-3 grid gap-2" : "hidden"}>
@@ -107,8 +106,8 @@ function MeasurementSection({
             className={`flex items-center justify-between gap-3 rounded-md pb-1.5 text-sm ${index === rows.length - 1 ? "" : "border-b border-[#e1d6c4]"
               }`}
           >
-            <span className="font-['Times_New_Roman',Times,serif] font-bold text-slate-700">{label}</span>
-            <span className="font-['Times_New_Roman',Times,serif] text-base font-bold text-slate-950">{value}</span>
+            <span className="font-['Times_New_Roman',Times,serif] text-base font-bold text-black">{label}</span>
+            <span className="font-['Times_New_Roman',Times,serif] text-base font-bold text-black">{value}</span>
           </div>
         ))}
       </div>
@@ -406,8 +405,8 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                     className="h-full w-full object-contain"
                   />
                 </div>
-                <div className="flex w-56 shrink-0 flex-col justify-self-end gap-y-1 rounded-lg border border-white/15 bg-white/10 px-3 py-1.5">
-                  <DetailRow label="Customer" value={customer.customerName || "-"} emphasize />
+                <div className="flex w-64 shrink-0 flex-col justify-self-end gap-y-1 rounded-lg border border-white/15 bg-white/10 px-3 py-1.5">
+                  <DetailRow label="Customer" value={customer.customerName || "-"} />
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
                     <DetailRow label="Phone" value={customer.phoneNumber || "-"} />
                     <DetailRow
@@ -424,7 +423,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
             <div className="border-b border-[#e1d6c4]" />
             <div className="flex flex-row gap-4 p-6">
               <div className="flex w-64 shrink-0 flex-col gap-4 border-r border-[#e1d6c4] pr-4">
-                <h2 className="border-b border-[#e1d6c4] pb-2 text-center font-serif text-sm font-bold uppercase tracking-wide text-[#0d6b5f]">
+                <h2 className="whitespace-nowrap border-b border-[#e1d6c4] pb-2 text-center font-serif text-sm font-bold uppercase text-[#0d6b5f]">
                   Measurement Detail ({customer.measurementUnit || "inch"})
                 </h2>
                 <MeasurementSection
