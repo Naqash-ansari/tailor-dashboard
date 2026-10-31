@@ -106,8 +106,8 @@ function MeasurementSection({
             className={`flex items-center justify-between gap-3 rounded-md pb-1.5 text-sm ${index === rows.length - 1 ? "" : "border-b border-[#e1d6c4]"
               }`}
           >
-            <span className="font-['Times_New_Roman',Times,serif] text-base font-bold text-black">{label}</span>
-            <span className="font-['Times_New_Roman',Times,serif] text-base font-bold text-black">{value}</span>
+            <span className="font-['Times_New_Roman',Times,serif] text-[15px] font-bold text-black">{label}</span>
+            <span className="font-['Times_New_Roman',Times,serif] text-[15px] font-bold text-black">{value}</span>
           </div>
         ))}
       </div>
@@ -393,7 +393,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
 
         {customer ? (
           <section className="order-print-area rounded-lg bg-white shadow-sm">
-            <div className="print-plain-header rounded-t-lg bg-[#122b2a] px-3 pt-3 text-white">
+            <div className="print-plain-header rounded-t-lg bg-[#122b2a] px-3 text-white">
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
                 <ShopBrandText className="justify-self-start" />
                 <div className="flex h-40 w-40 shrink-0 items-center justify-center">
