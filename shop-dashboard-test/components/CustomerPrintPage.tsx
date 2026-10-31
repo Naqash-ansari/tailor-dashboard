@@ -74,6 +74,23 @@ const lowerBodyFields: Array<[string, keyof TailorCustomer]> = [
   ["Ankle / Bottom", "ankleBottom"]
 ];
 
+// Fraction glyphs like ¼ print very small, so they are drawn larger than the whole number.
+function MeasurementValue({ value }: { value: string }) {
+  return (
+    <>
+      {value.split(/([¼½¾])/).map((part, index) =>
+        /^[¼½¾]$/.test(part) ? (
+          <span key={index} className="text-[1.2em] leading-none">
+            {part}
+          </span>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+}
+
 function MeasurementSection({
   title,
   fields,
@@ -107,7 +124,9 @@ function MeasurementSection({
               }`}
           >
             <span className="font-['Times_New_Roman',Times,serif] text-[15px] font-bold text-black">{label}</span>
-            <span className="font-['Times_New_Roman',Times,serif] text-[15px] font-bold text-black">{value}</span>
+            <span className="font-['Times_New_Roman',Times,serif] text-[15px] font-bold text-black">
+              <MeasurementValue value={value} />
+            </span>
           </div>
         ))}
       </div>

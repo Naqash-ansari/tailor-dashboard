@@ -13,6 +13,7 @@ import {
     saveCustomerRecord
 } from "@/lib/customerApi";
 import { MeasurementCalculator } from "@/components/MeasurementCalculator";
+import { MeasurementInput } from "@/components/MeasurementInput";
 import { stripLegacyIdPrefix } from "@/lib/customerId";
 import {
     cleanGarmentValue,
@@ -1536,7 +1537,12 @@ export function CustomerOrderForm() {
                                 onChange={(value, picked) => handleGarmentChange("upper", value, picked)}
                                 onDeleteOption={(option) => setPendingGarmentDelete({ kind: "upper", option })}
                             />
-                            <Field label="Length" name="qameezLength" value={form.qameezLength} onChange={handleChange} />
+                            {/* Fraction input trial: only this field uses it for now. */}
+                            <MeasurementInput
+                                label="Length"
+                                value={form.qameezLength}
+                                onChange={(value) => setForm((current) => ({ ...current, qameezLength: value }))}
+                            />
                             <Field label="Blouse Length" name="blouseLength" value={form.blouseLength} onChange={handleChange} />
                             <Field label="Ghaira / Bottom" name="ghairaBottom" value={form.ghairaBottom} onChange={handleChange} />
                             <Field label="Shoulder" name="shoulder" value={form.shoulder} onChange={handleChange} />
