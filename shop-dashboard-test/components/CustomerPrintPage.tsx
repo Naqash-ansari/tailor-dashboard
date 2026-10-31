@@ -423,7 +423,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
             <div className="border-b border-[#e1d6c4]" />
             <div className="flex flex-row gap-4 p-6">
               <div className="flex w-64 shrink-0 flex-col gap-1 border-r border-[#e1d6c4] pr-4">
-                <h2 className="whitespace-nowrap rounded-md bg-[#0d6b5f] py-1 text-center font-serif text-sm font-bold uppercase text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
+                <h2 className="whitespace-nowrap rounded-md bg-[#0d6b5f] px-2 py-1 text-center font-serif text-[13px] font-bold uppercase text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
                   Measurement Detail ({customer.measurementUnit || "inch"})
                 </h2>
                 <MeasurementSection
