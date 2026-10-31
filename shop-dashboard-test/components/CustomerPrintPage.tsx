@@ -393,7 +393,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
 
         {customer ? (
           <section className="order-print-area rounded-lg bg-white shadow-sm">
-            <div className="print-plain-header rounded-t-lg bg-[#122b2a] p-3 text-white">
+            <div className="print-plain-header rounded-t-lg bg-[#122b2a] px-3 pt-3 text-white">
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
                 <ShopBrandText className="justify-self-start" />
                 <div className="flex h-40 w-40 shrink-0 items-center justify-center">

@@ -128,7 +128,7 @@ body {
   }
 
   .order-print-area > .print-plain-header {
-    padding: 2mm 0 !important;
+    padding: 2mm 0 0 !important;
   }
 
   .order-print-area p,
