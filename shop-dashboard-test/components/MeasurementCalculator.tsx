@@ -203,7 +203,7 @@ export function MeasurementCalculator() {
           onKeyDown={handleKeyDown}
           className="absolute right-0 top-full z-30 mt-2 w-72 rounded-2xl border border-[#d8ccb9] bg-[#fcfbf8] p-3 text-left shadow-2xl outline-none"
         >
-          <div className="mb-3 rounded-xl bg-gradient-to-br from-[#122b2a] to-[#1d4441] px-4 py-3 text-right">
+          <div className="mb-3 rounded-xl bg-gradient-to-br from-[#0f4b44] to-[#135a52] px-4 py-3 text-right">
             <p className="min-h-[1.25rem] truncate text-xs font-medium text-[#e8dfd2]/80">
               {expression && preview !== null ? `= ${preview}` : history[0] && !expression ? `${history[0].expression} =` : ""}
             </p>
@@ -275,7 +275,7 @@ export function MeasurementCalculator() {
             <button
               type="button"
               onClick={showResult}
-              className="h-11 rounded-xl bg-[#0d6b5f] text-lg font-bold text-white shadow-sm transition hover:bg-[#0b5a50] active:scale-95"
+              className="h-11 rounded-xl bg-[#0f4b44] text-lg font-bold text-white shadow-sm transition hover:bg-[#135a52] active:scale-95"
             >
               =
             </button>

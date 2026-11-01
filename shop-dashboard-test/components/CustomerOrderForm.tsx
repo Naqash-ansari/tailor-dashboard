@@ -13,7 +13,7 @@ import {
     saveCustomerRecord
 } from "@/lib/customerApi";
 import { MeasurementCalculator } from "@/components/MeasurementCalculator";
-import { MeasurementInput } from "@/components/MeasurementInput";
+import { FractionTextField, MeasurementInput } from "@/components/MeasurementInput";
 import { stripLegacyIdPrefix } from "@/lib/customerId";
 import {
     cleanGarmentValue,
@@ -958,21 +958,11 @@ function ImageChoiceField({
                             <span className="mb-1 block text-xs font-semibold text-slate-700">
                                 {extraField.label}
                             </span>
-                            {extraField.multiline ? (
-                                <textarea
-                                    className={inputClass}
-                                    rows={3}
-                                    value={extraField.value}
-                                    onChange={(event) => extraField.onChange(event.target.value)}
-                                />
-                            ) : (
-                                <input
-                                    type="text"
-                                    className={inputClass}
-                                    value={extraField.value}
-                                    onChange={(event) => extraField.onChange(event.target.value)}
-                                />
-                            )}
+                            <FractionTextField
+                                value={extraField.value}
+                                onChange={extraField.onChange}
+                                multiline={extraField.multiline}
+                            />
                         </label>
                     ) : null}
                 </div>
@@ -1207,6 +1197,11 @@ export function CustomerOrderForm() {
         });
     };
 
+    // Fraction measurement inputs (e.g. "32 ⅜") report the new text directly instead of a change event.
+    const setMeasurement = (name: keyof FormState, value: string) => {
+        setForm((current) => ({ ...current, [name]: value }));
+    };
+
     const handlePhoneBlur = () => {
         if (form.number && !isValidUkPhone(form.number)) {
             setPhoneError("Enter a valid UK number, e.g. 07911 123456.");
@@ -1408,7 +1403,7 @@ export function CustomerOrderForm() {
                         className="w-full max-w-sm overflow-hidden rounded-xl border border-[#e1d6c4] bg-white shadow-2xl"
                         onClick={(event) => event.stopPropagation()}
                     >
-                        <div className="bg-[#122b2a] px-5 py-3">
+                        <div className="bg-[#0f4b44] px-5 py-3">
                             <h2 id="delete-garment-title" className="text-base font-bold text-white">
                                 Delete from list
                             </h2>
@@ -1449,7 +1444,7 @@ export function CustomerOrderForm() {
                 </Link>
             </div>
             <div className="mx-auto max-w-6xl rounded-2xl border border-[#e1d6c4] bg-[#fcfbf8] p-4 shadow-sm sm:p-6">
-                {/* <header className="mb-6 rounded-xl bg-[#122b2a] p-6 text-white">
+                {/* <header className="mb-6 rounded-xl bg-[#0f4b44] p-6 text-white">
                     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f3d68c]">
                         Tailor measurement form
                     </p>
@@ -1464,7 +1459,7 @@ export function CustomerOrderForm() {
 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     <section className={sectionClass}>
-                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                        <div className="mb-4 rounded-lg bg-[#0f4b44] px-4 py-3 text-center">
                             <h2 className="text-lg font-bold text-white">General Information</h2>
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -1520,7 +1515,7 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="relative mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                        <div className="relative mb-4 rounded-lg bg-[#0f4b44] px-4 py-3 text-center">
                             <h2 className="text-lg font-bold text-white">Upper Body Measurements</h2>
                             <div className="absolute right-3 top-1/2 z-30 -translate-y-1/2">
                                 <MeasurementCalculator />
@@ -1537,39 +1532,34 @@ export function CustomerOrderForm() {
                                 onChange={(value, picked) => handleGarmentChange("upper", value, picked)}
                                 onDeleteOption={(option) => setPendingGarmentDelete({ kind: "upper", option })}
                             />
-                            {/* Fraction input trial: only this field uses it for now. */}
-                            <MeasurementInput
-                                label="Length"
-                                value={form.qameezLength}
-                                onChange={(value) => setForm((current) => ({ ...current, qameezLength: value }))}
-                            />
-                            <Field label="Blouse Length" name="blouseLength" value={form.blouseLength} onChange={handleChange} />
-                            <Field label="Ghaira / Bottom" name="ghairaBottom" value={form.ghairaBottom} onChange={handleChange} />
-                            <Field label="Shoulder" name="shoulder" value={form.shoulder} onChange={handleChange} />
-                            <Field label="Shoulder Down" name="shoulderDown" value={form.shoulderDown} onChange={handleChange} />
-                            <Field label="Shoulder Strap" name="shoulderStrap" value={form.shoulderStrap} onChange={handleChange} />
-                            <Field label="Neck" name="neck" value={form.neck} onChange={handleChange} />
-                            <Field label="Shoulder to Apex Point" name="shoulderToApexPoint" value={form.shoulderToApexPoint} onChange={handleChange} />
-                            <Field label="Front Chest" name="frontChest" value={form.frontChest} onChange={handleChange} />
-                            <Field label="Upper Chest" name="upperChest" value={form.upperChest} onChange={handleChange} />
-                            <Field label="Chest" name="chest" value={form.chest} onChange={handleChange} />
-                            <Field label="Under Chest" name="underChest" value={form.underChest} onChange={handleChange} />
-                            <Field label="Upper Back" name="upperBack" value={form.upperBack} onChange={handleChange} />
-                            <Field label="Cross Back" name="crossBack" value={form.crossBack} onChange={handleChange} />
-                            <Field label="Waist" name="waist" value={form.waist} onChange={handleChange} />
-                            <Field label="Hip" name="upperHip" value={form.upperHip} onChange={handleChange} />
-                            <Field label="Side Fitting Seam" name="sideFittingSeam" value={form.sideFittingSeam} onChange={handleChange} />
-                            <Field label="Sleeve Length" name="sleeveLength" value={form.sleeveLength} onChange={handleChange} />
-                            <Field label="Arm Hole" name="armHole" value={form.armHole} onChange={handleChange} />
-                            <Field label="Bicep" name="bicep" value={form.bicep} onChange={handleChange} />
-                            <Field label="Elbow" name="elbow" value={form.elbow} onChange={handleChange} />
-                            <Field label="Forearm" name="forearm" value={form.forearm} onChange={handleChange} />
-                            <Field label="Wrist / Cuff" name="wristCuff" value={form.wristCuff} onChange={handleChange} />
+                            <MeasurementInput label="Length" value={form.qameezLength} onChange={(value) => setMeasurement("qameezLength", value)} />
+                            <MeasurementInput label="Blouse Length" value={form.blouseLength} onChange={(value) => setMeasurement("blouseLength", value)} />
+                            <MeasurementInput label="Ghaira / Bottom" value={form.ghairaBottom} onChange={(value) => setMeasurement("ghairaBottom", value)} />
+                            <MeasurementInput label="Shoulder" value={form.shoulder} onChange={(value) => setMeasurement("shoulder", value)} />
+                            <MeasurementInput label="Shoulder Down" value={form.shoulderDown} onChange={(value) => setMeasurement("shoulderDown", value)} />
+                            <MeasurementInput label="Shoulder Strap" value={form.shoulderStrap} onChange={(value) => setMeasurement("shoulderStrap", value)} />
+                            <MeasurementInput label="Neck" value={form.neck} onChange={(value) => setMeasurement("neck", value)} />
+                            <MeasurementInput label="Shoulder to Apex Point" value={form.shoulderToApexPoint} onChange={(value) => setMeasurement("shoulderToApexPoint", value)} />
+                            <MeasurementInput label="Front Chest" value={form.frontChest} onChange={(value) => setMeasurement("frontChest", value)} />
+                            <MeasurementInput label="Upper Chest" value={form.upperChest} onChange={(value) => setMeasurement("upperChest", value)} />
+                            <MeasurementInput label="Chest" value={form.chest} onChange={(value) => setMeasurement("chest", value)} />
+                            <MeasurementInput label="Under Chest" value={form.underChest} onChange={(value) => setMeasurement("underChest", value)} />
+                            <MeasurementInput label="Upper Back" value={form.upperBack} onChange={(value) => setMeasurement("upperBack", value)} />
+                            <MeasurementInput label="Cross Back" value={form.crossBack} onChange={(value) => setMeasurement("crossBack", value)} />
+                            <MeasurementInput label="Waist" value={form.waist} onChange={(value) => setMeasurement("waist", value)} />
+                            <MeasurementInput label="Hip" value={form.upperHip} onChange={(value) => setMeasurement("upperHip", value)} />
+                            <MeasurementInput label="Side Fitting Seam" value={form.sideFittingSeam} onChange={(value) => setMeasurement("sideFittingSeam", value)} />
+                            <MeasurementInput label="Sleeve Length" value={form.sleeveLength} onChange={(value) => setMeasurement("sleeveLength", value)} />
+                            <MeasurementInput label="Arm Hole" value={form.armHole} onChange={(value) => setMeasurement("armHole", value)} />
+                            <MeasurementInput label="Bicep" value={form.bicep} onChange={(value) => setMeasurement("bicep", value)} />
+                            <MeasurementInput label="Elbow" value={form.elbow} onChange={(value) => setMeasurement("elbow", value)} />
+                            <MeasurementInput label="Forearm" value={form.forearm} onChange={(value) => setMeasurement("forearm", value)} />
+                            <MeasurementInput label="Wrist / Cuff" value={form.wristCuff} onChange={(value) => setMeasurement("wristCuff", value)} />
                         </div>
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="relative mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                        <div className="relative mb-4 rounded-lg bg-[#0f4b44] px-4 py-3 text-center">
                             <h2 className="text-lg font-bold text-white">Lower Body Measurements</h2>
                             <div className="absolute right-3 top-1/2 z-30 -translate-y-1/2">
                                 <MeasurementCalculator />
@@ -1586,29 +1576,38 @@ export function CustomerOrderForm() {
                                 onChange={(value, picked) => handleGarmentChange("lower", value, picked)}
                                 onDeleteOption={(option) => setPendingGarmentDelete({ kind: "lower", option })}
                             />
-                            <Field label="Length" name="shalwarLength" value={form.shalwarLength} onChange={handleChange} />
-                            <Field label="Skirt Length" name="skirtLength" value={form.skirtLength} onChange={handleChange} />
-                            <Field label="Choli / Frill Length" name="choliFrillLength" value={form.choliFrillLength} onChange={handleChange} />
-                            <Field label="Waist / Belt" name="waistBelt" value={form.waistBelt} onChange={handleChange} />
-                            <Field label="Hip" name="hip" value={form.hip} onChange={handleChange} />
-                            <Field label="Crotch / Rise" name="crotchRise" value={form.crotchRise} onChange={handleChange} />
-                            <Field label="Front Rise" name="frontRise" value={form.frontRise} onChange={handleChange} />
-                            <Field label="Back Rise" name="backRise" value={form.backRise} onChange={handleChange} />
-                            <Field label="Thigh" name="thigh" value={form.thigh} onChange={handleChange} />
-                            <Field label="Right Thigh" name="rightThigh" value={form.rightThigh} onChange={handleChange} />
-                            <Field label="Left Thigh" name="leftThigh" value={form.leftThigh} onChange={handleChange} />
-                            <Field label="Inseam Length" name="inseamLength" value={form.inseamLength} onChange={handleChange} />
-                            <Field label="Knees" name="knees" value={form.knees} onChange={handleChange} />
-                            <Field label="Calf" name="calf" value={form.calf} onChange={handleChange} />
-                            <Field label="Right Calf" name="rightCalf" value={form.rightCalf} onChange={handleChange} />
-                            <Field label="Left Calf" name="leftCalf" value={form.leftCalf} onChange={handleChange} />
-                            <Field label="Ankle / Bottom" name="ankleBottom" value={form.ankleBottom} onChange={handleChange} />
-                            <Field label="Elastic" name="elastic" value={form.elastic} onChange={handleChange} />
+                            <MeasurementInput label="Length" value={form.shalwarLength} onChange={(value) => setMeasurement("shalwarLength", value)} />
+                            <MeasurementInput label="Skirt Length" value={form.skirtLength} onChange={(value) => setMeasurement("skirtLength", value)} />
+                            <MeasurementInput label="Choli / Frill Length" value={form.choliFrillLength} onChange={(value) => setMeasurement("choliFrillLength", value)} />
+                            <MeasurementInput label="Waist / Belt" value={form.waistBelt} onChange={(value) => setMeasurement("waistBelt", value)} />
+                            <MeasurementInput label="Hip" value={form.hip} onChange={(value) => setMeasurement("hip", value)} />
+                            <MeasurementInput label="Crotch / Rise" value={form.crotchRise} onChange={(value) => setMeasurement("crotchRise", value)} />
+                            <MeasurementInput label="Front Rise" value={form.frontRise} onChange={(value) => setMeasurement("frontRise", value)} />
+                            <MeasurementInput label="Back Rise" value={form.backRise} onChange={(value) => setMeasurement("backRise", value)} />
+                            <MeasurementInput label="Thigh" value={form.thigh} onChange={(value) => setMeasurement("thigh", value)} />
+                            <MeasurementInput label="Right Thigh" value={form.rightThigh} onChange={(value) => setMeasurement("rightThigh", value)} />
+                            <MeasurementInput label="Left Thigh" value={form.leftThigh} onChange={(value) => setMeasurement("leftThigh", value)} />
+                            <MeasurementInput label="Inseam Length" value={form.inseamLength} onChange={(value) => setMeasurement("inseamLength", value)} />
+                            <MeasurementInput label="Knees" value={form.knees} onChange={(value) => setMeasurement("knees", value)} />
+                            <MeasurementInput label="Calf" value={form.calf} onChange={(value) => setMeasurement("calf", value)} />
+                            <MeasurementInput label="Right Calf" value={form.rightCalf} onChange={(value) => setMeasurement("rightCalf", value)} />
+                            <MeasurementInput label="Left Calf" value={form.leftCalf} onChange={(value) => setMeasurement("leftCalf", value)} />
+                            <MeasurementInput label="Ankle / Bottom" value={form.ankleBottom} onChange={(value) => setMeasurement("ankleBottom", value)} />
+                            <SelectField
+                                label="Elastic"
+                                name="elastic"
+                                value={form.elastic}
+                                onChange={handleChange}
+                                options={[
+                                    { value: "", label: "No" },
+                                    { value: "yes", label: "Yes" }
+                                ]}
+                            />
                         </div>
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="relative mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                        <div className="relative mb-4 rounded-lg bg-[#0f4b44] px-4 py-3 text-center">
                             <h2 className="text-lg font-bold text-white">Designing &amp; Stitching Details</h2>
                             <div className="absolute right-3 top-1/2 z-30 -translate-y-1/2">
                                 <MeasurementCalculator />
@@ -1811,7 +1810,14 @@ export function CustomerOrderForm() {
                                         setForm((current) => ({ ...current, ghairaBottomValue: value }))
                                 }}
                             /> */}
-                            <Field label="Side Chaak / Slit" name="sideChaakSlit" value={form.sideChaakSlit} onChange={handleChange} />
+                            <label className="block">
+                                <span className="mb-1 block text-sm font-medium text-slate-700">Side Chaak / Slit</span>
+                                <FractionTextField
+                                    name="sideChaakSlit"
+                                    value={form.sideChaakSlit}
+                                    onChange={(value) => setMeasurement("sideChaakSlit", value)}
+                                />
+                            </label>
                             <Field label="Plates / Darts" name="platesDarts" value={form.platesDarts} onChange={handleChange} />
                             <ImageChoiceField
                                 label="Zip"
@@ -1871,7 +1877,7 @@ export function CustomerOrderForm() {
                     </section>
 
                     <section className={sectionClass}>
-                        <div className="mb-4 rounded-lg bg-[#122b2a] px-4 py-3 text-center">
+                        <div className="mb-4 rounded-lg bg-[#0f4b44] px-4 py-3 text-center">
                             <h2 className="text-lg font-bold text-white">Payment Details</h2>
                             {/* <p className="mt-1 text-sm text-[#e8dfd2]">
                                 Professional billing summary for each order.
@@ -1958,7 +1964,7 @@ export function CustomerOrderForm() {
                         <button
                             type="submit"
                             disabled={isSaving}
-                            className="rounded-md bg-[#122b2a] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#183936] disabled:cursor-not-allowed disabled:bg-slate-400"
+                            className="rounded-md bg-[#0f4b44] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#135a52] disabled:cursor-not-allowed disabled:bg-slate-400"
                         >
                             {isSaving ? "Saving..." : isEditing ? "Update order" : "Save order"}
                         </button>

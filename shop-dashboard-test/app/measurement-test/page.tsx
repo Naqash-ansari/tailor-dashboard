@@ -31,7 +31,7 @@ type TestRecord = {
 
 const t = {
     title: "Measurement input test",
-    subtitle: "Type a whole number, then pick ¼ ½ ¾. Nothing here is saved to real customers.",
+    subtitle: "Type a whole number, then pick a fraction (⅛ to ⅞). Nothing here is saved to real customers.",
     customer: "Customer Information",
     name: "Customer Name",
     mobile: "Mobile Number",
@@ -47,7 +47,7 @@ const t = {
     saved: "Saved ✓",
     preview: "Print preview",
     remove: "Remove fraction",
-    hint: "Use a whole number with ¼, ½ or ¾, e.g. 21 ¾"
+    hint: "Use a whole number with an eighth (⅛ to ⅞), e.g. 21 ⅜"
 };
 
 function emptyRecord(): TestRecord {
@@ -150,7 +150,7 @@ export default function MeasurementTestPage() {
                 </header>
 
                 <section className="print-hidden rounded-xl border border-[#e1d6c4] bg-white p-5 shadow-sm">
-                    <h2 className="mb-4 rounded-lg bg-[#122b2a] px-4 py-2 text-center text-lg font-bold text-white">
+                    <h2 className="mb-4 rounded-lg bg-[#0f4b44] px-4 py-2 text-center text-lg font-bold text-white">
                         {t.customer}
                     </h2>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -194,7 +194,7 @@ export default function MeasurementTestPage() {
                 </section>
 
                 <section className="print-hidden rounded-xl border border-[#e1d6c4] bg-white p-5 shadow-sm">
-                    <h2 className="mb-4 rounded-lg bg-[#122b2a] px-4 py-2 text-center text-lg font-bold text-white">
+                    <h2 className="mb-4 rounded-lg bg-[#0f4b44] px-4 py-2 text-center text-lg font-bold text-white">
                         {t.measurements} (inch)
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2">
@@ -215,7 +215,7 @@ export default function MeasurementTestPage() {
                     <button
                         type="button"
                         onClick={save}
-                        className="rounded-md bg-[#122b2a] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#183936]"
+                        className="rounded-md bg-[#0f4b44] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#135a52]"
                     >
                         {t.save}
                     </button>
@@ -236,7 +236,7 @@ export default function MeasurementTestPage() {
                     <button
                         type="button"
                         onClick={() => window.print()}
-                        className="rounded-md bg-[#0d6b5f] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#0b5a50]"
+                        className="rounded-md bg-[#0f4b44] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#135a52]"
                     >
                         {t.print}
                     </button>

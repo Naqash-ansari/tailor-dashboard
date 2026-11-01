@@ -43,7 +43,7 @@ export function CustomerLabelPage({ customerId }: { customerId: string }) {
           <button
             type="button"
             onClick={() => window.print()}
-            className="rounded-md bg-[#102f2d] px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-[#183936]"
+            className="rounded-md bg-[#0f4b44] px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-[#135a52]"
           >
             Print label
           </button>

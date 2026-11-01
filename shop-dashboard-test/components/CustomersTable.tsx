@@ -369,7 +369,7 @@ export function CustomersTable() {
           </div>
           <Link
             href={`/customers/order?customerId=${group.orders[0].id}`}
-            className="w-fit rounded-md bg-[#102f2d] px-4 py-2 text-sm font-bold text-white hover:bg-[#183936]"
+            className="w-fit rounded-md bg-[#0f4b44] px-4 py-2 text-sm font-bold text-white hover:bg-[#135a52]"
           >
             Add order
           </Link>
@@ -446,7 +446,7 @@ export function CustomersTable() {
             </Link>
             <Link
               href="/customers/order"
-              className="rounded-md bg-[#005f52] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#064e45]"
+              className="rounded-md bg-[#0f4b44] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#135a52]"
             >
               Add new customer
             </Link>
@@ -512,7 +512,7 @@ export function CustomersTable() {
       {customerPendingDelete ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 py-6">
           <div className="dashboard-card w-full max-w-md overflow-hidden rounded-lg border border-[#e1d6c4] bg-white shadow-2xl">
-            <div className="bg-[#122b2a] px-5 py-4">
+            <div className="bg-[#0f4b44] px-5 py-4">
               <p className="text-xs font-bold uppercase tracking-wide text-[#d8b05b]">
                 Delete order
               </p>

@@ -398,7 +398,7 @@ export function CustomerForm() {
   return (
     <main className="min-h-screen bg-[#f7f4ee] px-5 py-6 sm:px-8 lg:px-12">
       <form className="mx-auto max-w-6xl" onSubmit={handleSubmit}>
-        <header className="mb-6 overflow-hidden rounded-lg border border-[#e1d6c4] bg-[#122b2a] shadow-xl">
+        <header className="mb-6 overflow-hidden rounded-lg border border-[#e1d6c4] bg-[#0f4b44] shadow-xl">
           <div className="grid gap-6 p-6 lg:grid-cols-[1fr_auto] lg:items-end lg:p-8">
             <div>
               <div className="flex flex-wrap items-center gap-4">
@@ -409,7 +409,7 @@ export function CustomerForm() {
                     data="/brand/aans-fabric-logo.pdf#toolbar=0&navpanes=0&scrollbar=0"
                     type="application/pdf"
                   >
-                    <span className="brand-name text-sm font-bold text-[#122b2a]">
+                    <span className="brand-name text-sm font-bold text-[#0f4b44]">
                       Aans Fabrics & Tailors Ltd
                     </span>
                   </object>
@@ -454,7 +454,7 @@ export function CustomerForm() {
               </Link>
               <button
                 type="submit"
-                className="rounded-md bg-[#d8b05b] px-5 py-2.5 text-sm font-bold text-[#122b2a] shadow-sm transition hover:bg-[#e4c171]"
+                className="rounded-md bg-[#d8b05b] px-5 py-2.5 text-sm font-bold text-[#0f4b44] shadow-sm transition hover:bg-[#e4c171]"
               >
                 {isEditing ? "Update order" : "Save order"}
               </button>
@@ -554,7 +554,7 @@ export function CustomerForm() {
                   }
                   className={
                     values.measurementUnit === unit
-                      ? "rounded bg-[#0d6b5f] px-4 py-1.5 text-sm font-bold uppercase text-white shadow-sm"
+                      ? "rounded bg-[#0f4b44] px-4 py-1.5 text-sm font-bold uppercase text-white shadow-sm"
                       : "rounded px-4 py-1.5 text-sm font-bold uppercase text-slate-700 hover:bg-white"
                   }
                 >
@@ -693,7 +693,7 @@ export function CustomerForm() {
               </Link>
               <button
                 type="submit"
-                className="rounded-md bg-[#122b2a] px-5 py-2 text-sm font-bold text-white hover:bg-[#183936]"
+                className="rounded-md bg-[#0f4b44] px-5 py-2 text-sm font-bold text-white hover:bg-[#135a52]"
               >
                 {isEditing ? "Update order" : "Save order"}
               </button>

@@ -171,7 +171,7 @@ export function DashboardHome() {
     <main className="min-h-screen bg-[#f7f4ee] px-5 py-6 text-slate-950 sm:px-8 lg:px-12">
       <DeliveryReminderToast notice={deliveryNotice} onDismiss={dismissDeliveryNotice} />
       <section className="mx-auto max-w-7xl">
-        <header className="overflow-hidden rounded-lg border border-[#e1d6c4] bg-[#122b2a] shadow-xl">
+        <header className="overflow-hidden rounded-lg border border-[#e1d6c4] bg-[#0f4b44] shadow-xl">
           <div className="grid gap-8 p-6 lg:grid-cols-[1.1fr_0.9fr] lg:p-8">
             <div className="flex flex-col justify-between gap-8">
               <div>
@@ -204,7 +204,7 @@ export function DashboardHome() {
               <nav className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/customers/order"
-                  className="rounded-md bg-[#d8b05b] px-5 py-2.5 text-sm font-bold text-[#122b2a] shadow-sm transition hover:bg-[#e4c171]"
+                  className="rounded-md bg-[#d8b05b] px-5 py-2.5 text-sm font-bold text-[#0f4b44] shadow-sm transition hover:bg-[#e4c171]"
                 >
                   Add customer
                 </Link>
@@ -356,7 +356,7 @@ export function DashboardHome() {
             <h2 className="mt-1 text-xl font-bold text-slate-950">
               Balance collection
             </h2>
-            <div className="mt-6 rounded-lg bg-[#122b2a] p-5 text-white">
+            <div className="mt-6 rounded-lg bg-[#0f4b44] p-5 text-white">
               <p className="text-sm text-[#e8dfd2]">Pending balance</p>
               <p className="mt-2 text-3xl font-bold">
                 £{formatAmount(dashboardStats.pendingPayments)}
@@ -380,7 +380,7 @@ export function DashboardHome() {
             </div>
             <Link
               href="/customers/order"
-              className="w-fit rounded-md bg-[#122b2a] px-4 py-2 text-sm font-bold text-white hover:bg-[#183936]"
+              className="w-fit rounded-md bg-[#0f4b44] px-4 py-2 text-sm font-bold text-white hover:bg-[#135a52]"
             >
               New measurement
             </Link>

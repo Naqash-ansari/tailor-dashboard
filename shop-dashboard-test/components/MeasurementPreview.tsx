@@ -74,7 +74,7 @@ function PatternSvg({ kind }: { kind: PatternKind }) {
       <rect width="220" height="150" rx="10" fill="#fffaf0" />
       <g
         fill="#fffdf8"
-        stroke="#102f2d"
+        stroke="#0f4b44"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="3"
@@ -169,7 +169,7 @@ function PatternCard({
 }) {
   return (
     <article className="rounded-lg border border-[#e1d6c4] bg-white p-4 shadow-sm">
-      <h3 className="text-sm font-black uppercase tracking-wide text-[#0f2f2c]">
+      <h3 className="text-sm font-black uppercase tracking-wide text-[#0f4b44]">
         {title}
       </h3>
       <div className="mt-3 rounded-md border border-[#efe4d4] bg-[#fffaf0] p-2">
@@ -364,7 +364,7 @@ export function MeasurementPreview({
             <button
               type="button"
               onClick={() => window.print()}
-              className="print-hidden w-fit rounded-md bg-[#102f2d] px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-[#183936]"
+              className="print-hidden w-fit rounded-md bg-[#0f4b44] px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-[#135a52]"
             >
               Print
             </button>
@@ -417,7 +417,7 @@ export function MeasurementPreview({
         </div>
 
         <div className="print-art-sheet rounded-lg border border-[#e1d6c4] bg-[#fbfaf7] p-4">
-          <div className="mb-4 flex flex-col gap-2 rounded-lg bg-[#102f2d] px-5 py-4 text-white sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-4 flex flex-col gap-2 rounded-lg bg-[#0f4b44] px-5 py-4 text-white sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="brand-name text-xs font-bold uppercase tracking-wide text-[#f7d98b]">
                 Aans Fabrics & Tailors Ltd

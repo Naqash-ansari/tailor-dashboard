@@ -74,12 +74,12 @@ const lowerBodyFields: Array<[string, keyof TailorCustomer]> = [
   ["Ankle / Bottom", "ankleBottom"]
 ];
 
-// Fraction glyphs like ¼ print very small, so they are drawn larger than the whole number.
+// Fraction glyphs like ¼ or ⅜ print very small, so they are drawn larger than the whole number.
 function MeasurementValue({ value }: { value: string }) {
   return (
     <>
-      {value.split(/([¼½¾])/).map((part, index) =>
-        /^[¼½¾]$/.test(part) ? (
+      {value.split(/([⅛¼⅜½⅝¾⅞])/).map((part, index) =>
+        /^[⅛¼⅜½⅝¾⅞]$/.test(part) ? (
           <span key={index} className="text-[1.2em] leading-none">
             {part}
           </span>
@@ -111,16 +111,16 @@ function MeasurementSection({
   }
 
   return (
-    <div className="rounded-lg px-4">
+    <div>
       {/* Exact colour adjust keeps the green background when printing. */}
-      <h3 className="rounded-md border border-[#0d6b5f] bg-[#0d6b5f] py-1 text-center font-serif text-sm font-bold uppercase tracking-wide text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
+      <h3 className="whitespace-nowrap rounded-md bg-[#0f4b44] px-2 py-1 text-center font-serif text-[13px] font-bold uppercase text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
         {title}
       </h3>
-      <div className={rows.length > 0 ? "mt-3 grid gap-2" : "hidden"}>
+      <div className={rows.length > 0 ? "mt-1.5 grid gap-0.5" : "hidden"}>
         {rows.map(([label, value], index) => (
           <div
             key={label}
-            className={`flex items-center justify-between gap-3 rounded-md pb-1.5 text-sm ${index === rows.length - 1 ? "" : "border-b border-[#e1d6c4]"
+            className={`flex items-center justify-between gap-3 pb-0.5 text-sm ${index === rows.length - 1 ? "" : "border-b border-[#e1d6c4] print:border-b-[0.5px]"
               }`}
           >
             <span className="font-['Times_New_Roman',Times,serif] text-[15px] font-bold text-black">{label}</span>
@@ -301,8 +301,18 @@ function DesignImageSection({
     return null;
   }
 
+  // Several designs picked for one field are boxed together under the field name, so they read as one choice.
+  const isGroup = selectedDesigns.length > 1;
+
   return (
-    <div className="min-w-0 rounded-lg">
+    <div
+      className={`min-w-0 rounded-lg ${isGroup ? "relative border-2 border-[#0d6b5f] px-2 pb-1 pt-4 [-webkit-print-color-adjust:exact] [print-color-adjust:exact]" : ""}`}
+    >
+      {isGroup ? (
+        <span className="absolute -top-2.5 left-2 bg-white px-1 font-['Times_New_Roman',Times,serif] text-xs font-bold uppercase text-[#0d6b5f]">
+          {title.replace(/ Design$/, "")} ({selectedDesigns.length})
+        </span>
+      ) : null}
       {/* <h3 className="text-sm font-black uppercase tracking-wide text-[#0d6b5f]">{title}</h3> */}
       <div className="flex min-w-0 flex-col items-center gap-0.5">
         {/* Fixed widths apply per image so several selected designs keep their full size. */}
@@ -320,7 +330,7 @@ function DesignImageSection({
                   <span
                     className={`whitespace-pre-line text-center leading-tight ${valueOnWhite ? "rounded-sm bg-white px-1 py-0.5" : ""}`}
                   >
-                    {measurementValue}
+                    <MeasurementValue value={measurementValue} />
                   </span>
                 </p>
               ) : null}
@@ -344,7 +354,7 @@ function DesignImageSection({
         </div>
         {measurementValue && !valueOnImage ? (
           <div className="text-center leading-none">
-            <p className="font-['Times_New_Roman',Times,serif] text-xs font-bold text-[#0d6b5f]">{measurementValue}</p>
+            <p className="font-['Times_New_Roman',Times,serif] text-xs font-bold text-[#0d6b5f]"><MeasurementValue value={measurementValue} /></p>
             {/* <p className="mt-0.5 text-[9px] font-bold uppercase tracking-wide text-[#0d6b5f]/70">
               {unit}
             </p> */}
@@ -396,7 +406,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
           <button
             type="button"
             onClick={() => window.print()}
-            className="rounded-md bg-[#102f2d] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#183936]"
+            className="rounded-md bg-[#0f4b44] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#135a52]"
           >
             Print A4
           </button>
@@ -412,7 +422,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
 
         {customer ? (
           <section className="order-print-area rounded-lg bg-white shadow-sm">
-            <div className="print-plain-header rounded-t-lg bg-[#122b2a] px-3 text-white">
+            <div className="print-plain-header rounded-t-lg bg-[#0f4b44] px-3 text-white">
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
                 <ShopBrandText className="justify-self-start" />
                 <div className="flex h-40 w-40 shrink-0 items-center justify-center">
@@ -440,9 +450,9 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
               </div>
             </div>
             <div className="border-b border-[#e1d6c4]" />
-            <div className="flex flex-row gap-4 p-6">
+            <div className="flex flex-row gap-4 px-6 pb-6 pt-0.5">
               <div className="flex w-64 shrink-0 flex-col gap-1 border-r border-[#e1d6c4] pr-4">
-                <h2 className="whitespace-nowrap rounded-md bg-[#0d6b5f] px-2 py-1 text-center font-serif text-[13px] font-bold uppercase text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
+                <h2 className="whitespace-nowrap rounded-md bg-[#0f4b44] px-2 py-1 text-center font-serif text-[13px] font-bold uppercase text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
                   Measurement Detail ({customer.measurementUnit || "inch"})
                 </h2>
                 <MeasurementSection
@@ -459,7 +469,7 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                 />
               </div>
               <div className="min-w-0 flex-1 space-y-4">
-                <h2 className="rounded-md bg-[#0d6b5f] py-1 text-center text-sm font-black uppercase tracking-wide text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
+                <h2 className="whitespace-nowrap rounded-md bg-[#0f4b44] px-2 py-1 text-center font-serif text-[13px] font-bold uppercase text-white [-webkit-print-color-adjust:exact] [print-color-adjust:exact]">
                   Designing &amp; Stitching Details
                 </h2>
                 {(() => {
@@ -485,11 +495,11 @@ export function CustomerPrintPage({ customerId }: { customerId: string }) {
                   }
 
                   return (
-                    <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                    <div className="flex flex-wrap gap-x-6 gap-y-1 font-['Times_New_Roman',Times,serif] text-[15px] text-black">
                       {stitchingNotes.map(([label, value]) => (
                         <div key={label} className="flex items-center gap-1">
-                          <span className="font-bold text-slate-700">{label}:</span>
-                          <span className="font-bold text-slate-950">{value}</span>
+                          <span className="font-bold">{label}:</span>
+                          <span className="font-normal">{value}</span>
                         </div>
                       ))}
                     </div>
